@@ -1,0 +1,155 @@
+.property-search-form {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.zillow-style-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.search-container {
+  width: 100%;
+  max-width: 650px;
+}
+
+.search-input-group {
+  display: flex;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 2px solid #e5e7eb;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.search-input-group:focus-within {
+  border-color: #10B981;
+  box-shadow: 0 6px 25px rgba(16, 185, 129, 0.2);
+}
+
+.zillow-search-input {
+  flex: 1;
+  padding: 20px 24px;
+  border: none;
+  font-size: 18px;
+  font-weight: 400;
+  background: transparent;
+  color: #111827;
+  outline: none;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+}
+
+.zillow-search-input::placeholder {
+  color: #9CA3AF;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+
+.zillow-search-btn {
+  background: #10B981;
+  color: white;
+  border: none;
+  padding: 20px 28px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+}
+
+.zillow-search-btn:hover:not(:disabled) {
+  background: #059669;
+}
+
+.zillow-search-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.search-error {
+  color: #ef4444;
+  font-size: 14px;
+  margin-top: 8px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.quick-fill-link {
+  background: none;
+  border: none;
+  color: #10B981;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.quick-fill-link:hover {
+  background: rgba(16, 185, 129, 0.1);
+  text-decoration: none;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .property-search-form {
+    margin: 1rem;
+    border-radius: 8px;
+  }
+  
+  .form-header {
+    padding: 1.5rem;
+  }
+  
+  .search-form {
+    padding: 1.5rem;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .form-field {
+    margin-bottom: 1rem;
+  }
+  
+  .form-row:last-of-type .form-field {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-header h3 {
+    font-size: 1.25rem;
+  }
+  
+  .form-header p {
+    font-size: 0.875rem;
+  }
+  
+  .search-submit-btn {
+    font-size: 1rem;
+    padding: 0.875rem 1.5rem;
+  }
+}

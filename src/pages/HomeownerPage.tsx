@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { attomApiService } from '../services/attomApi';
+import type { PropertyValuation } from '../services/attomApi';
 import type { UserType } from '../types';
 
 const HomeownerPage: React.FC = () => {
@@ -10,6 +12,8 @@ const HomeownerPage: React.FC = () => {
   const [showValuation, setShowValuation] = useState(false);
   const [showBudgetEntry, setShowBudgetEntry] = useState(false);
   const [budget, setBudget] = useState('');
+  const [propertyData, setPropertyData] = useState<PropertyValuation | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   React.useEffect(() => {
     setUserType('homeowner');
@@ -20,10 +24,32 @@ const HomeownerPage: React.FC = () => {
     navigate('/dashboard');
   };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
+  const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Search submitted with address:', searchAddress);
     if (searchAddress.trim()) {
-      setShowValuation(true);
+      console.log('Starting property search...');
+      setIsLoading(true);
+      try {
+        console.log('Parsing address...');
+        const searchRequest = attomApiService.parseAddress(searchAddress);
+        console.log('Parsed address:', searchRequest);
+        
+        console.log('Calling getPropertyValuation...');
+        const valuation = await attomApiService.getPropertyValuation(searchRequest);
+        console.log('Got valuation:', valuation);
+        
+        setPropertyData(valuation);
+        setShowValuation(true);
+      } catch (error) {
+        console.error('Property search failed:', error);
+        // Still show valuation section with error state
+        setShowValuation(true);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      console.log('No address entered');
     }
   };
 
@@ -92,13 +118,16 @@ const HomeownerPage: React.FC = () => {
                   onChange={(e) => setSearchAddress(e.target.value)}
                   className="property-search-input"
                 />
-                <button type="submit" className="property-search-button">
-                  Get Free Estimate
+                <button type="submit" className="property-search-button" disabled={isLoading}>
+                  {isLoading ? 'Getting Estimate...' : 'Get Free Estimate'}
                 </button>
               </div>
               <p className="property-search-disclaimer">
                 Free instant estimate • No signup required • Trusted by thousands
               </p>
+              <button type="button" onClick={() => console.log('TEST BUTTON CLICKED')} style={{background: 'red', color: 'white', padding: '10px'}}>
+                TEST BUTTON - CHECK CONSOLE
+              </button>
             </form>
           </div>
 
@@ -108,11 +137,23 @@ const HomeownerPage: React.FC = () => {
               {/* Market Value Card */}
               <div className="market-value-card">
                 <h3 className="market-value-title">Estimated Market Value</h3>
-                <div className="market-value-amount">$475,000</div>
-                <div className="market-value-range">$450,000 – $500,000</div>
+                <div className="market-value-amount">
+                  ${propertyData ? propertyData.estimatedValue.toLocaleString() : '475,000'}
+                </div>
+                <div className="market-value-range">
+                  ${propertyData ? propertyData.valueRange.low.toLocaleString() : '450,000'} – 
+                  ${propertyData ? propertyData.valueRange.high.toLocaleString() : '500,000'}
+                </div>
                 <p className="market-value-disclaimer">
                   This estimate is based on recent sales of similar properties in your area, current market conditions, and property characteristics.
                 </p>
+                {propertyData?.confidence && (
+                  <div className="confidence-indicator">
+                    Confidence: <span className={`confidence-${propertyData.confidence}`}>
+                      {propertyData.confidence.toUpperCase()}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Top Recommendation */}

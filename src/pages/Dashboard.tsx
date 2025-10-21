@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../context/TranslationContext';
 import type { User } from '../types';
 
 const Dashboard: React.FC = () => {
   const { userType, project, setUserType } = useUser();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Only redirect if user type is supplier (removed for homeowners)
+  React.useEffect(() => {
+    if (userType === 'supplier') {
+      navigate('/');
+    }
+  }, [userType, navigate]);
 
   // Mock data for different user types
   const mockClients: User[] = [
@@ -20,10 +29,6 @@ const Dashboard: React.FC = () => {
     { id: '5', name: 'Lisa Thompson', email: 'lisa@example.com', type: 'contractor', specialty: 'Structural Work', verified: true }
   ];
 
-  const mockSuppliers: User[] = [
-    { id: '6', name: 'BuildMart Supply', email: 'info@buildmart.com', type: 'supplier', specialty: 'Building Materials' },
-    { id: '7', name: 'Premium Fixtures', email: 'sales@premiumfixtures.com', type: 'supplier', specialty: 'Luxury Fixtures' }
-  ];
 
   const mockActiveJobs = [
     { id: '1', clientName: 'John Smith', projectType: 'Kitchen Renovation', status: 'In Progress', deadline: '2024-04-15' },
@@ -39,8 +44,8 @@ const Dashboard: React.FC = () => {
   const renderHomeownerDashboard = () => (
     <div className="dashboard-content">
       <div className="dashboard-header">
-        <h1>Your Project Dashboard</h1>
-        <p>Track your renovation progress and connect with your team</p>
+        <h1>{t('dashboard.title')}</h1>
+        <p>{t('dashboard.subtitle')}</p>
       </div>
 
       {project ? (
@@ -50,8 +55,8 @@ const Dashboard: React.FC = () => {
               <h2>{project.name}</h2>
               <div className="progress-section">
                 <div className="progress-label">
-                  <span>Progress</span>
-                  <span>{project.progress}% Complete</span>
+                  <span>{t('dashboard.progress')}</span>
+                  <span>{project.progress}% {t('dashboard.complete')}</span>
                 </div>
                 <div className="progress-bar-container">
                   <div className="progress-bar">
@@ -64,36 +69,56 @@ const Dashboard: React.FC = () => {
               </div>
               
               <div className="budget-section">
-                <h3>Budget Range</h3>
+                <h3>{t('dashboard.budgetRange')}</h3>
                 <p className="budget-amount">{project.budgetRange}</p>
               </div>
 
-              {project.photos.length > 0 && (
-                <div className="project-photos">
-                  <h3>Project Photos</h3>
+              <div className="project-photos">
+                <div className="photos-header">
+                  <h3>{t('dashboard.progressPhotos')}</h3>
+                  <span className="photo-count">{project.photos.length} {t('dashboard.photos')}</span>
+                </div>
+                {project.photos.length > 0 ? (
                   <div className="photo-grid">
                     {project.photos.map((photo, index) => (
-                      <img 
-                        key={index} 
-                        src={photo} 
-                        alt={`Project ${index + 1}`} 
-                        className="project-photo"
-                      />
+                      <div key={index} className="photo-item">
+                        <img 
+                          src={photo} 
+                          alt={`Progress ${index + 1}`} 
+                          className="project-photo"
+                        />
+                        <div className="photo-overlay">
+                          <span className="photo-label">
+                            {index === 0 ? t('photos.before') : 
+                             index === 1 ? t('photos.demolition') :
+                             index === 2 ? t('photos.framing') :
+                             `Step ${index + 1}`}
+                          </span>
+                        </div>
+                      </div>
                     ))}
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div className="no-photos">
+                    <div className="upload-placeholder">
+                      <div className="upload-icon">📷</div>
+                      <p>{t('photos.noPhotos')}</p>
+                      <button className="upload-btn">{t('photos.uploadFirst')}</button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           <div className="team-sidebar">
-            <h3>Your Team</h3>
+            <h3>{t('dashboard.yourTeam')}</h3>
             <div className="team-members">
               {project.assignedTeam.agent && (
                 <div className="team-member">
                   <div className="member-info">
                     <h4>{project.assignedTeam.agent.name}</h4>
-                    <p>Agent</p>
+                    <p>{t('dashboard.agent')}</p>
                   </div>
                 </div>
               )}
@@ -101,7 +126,7 @@ const Dashboard: React.FC = () => {
                 <div className="team-member">
                   <div className="member-info">
                     <h4>{project.assignedTeam.contractor.name}</h4>
-                    <p>Contractor</p>
+                    <p>{t('dashboard.contractor')}</p>
                   </div>
                 </div>
               )}
@@ -110,10 +135,10 @@ const Dashboard: React.FC = () => {
         </div>
       ) : (
         <div className="no-project">
-          <h2>Welcome to Assemble!</h2>
-          <p>Get started by creating your first project</p>
+          <h2>{t('dashboard.welcome')}</h2>
+          <p>{t('dashboard.getStarted')}</p>
           <button className="cta-button" onClick={() => navigate('/guided-flow')}>
-            Start New Project
+            {t('dashboard.startNewProject')}
           </button>
         </div>
       )}
@@ -127,8 +152,8 @@ const Dashboard: React.FC = () => {
     return (
       <div className="dashboard-content">
         <div className="dashboard-header">
-          <h1>{userType === 'agent' ? 'Agent' : userType === 'contractor' ? 'Contractor' : 'Supplier'} Dashboard</h1>
-          <p>Manage your {isAgent ? 'clients and projects' : isContractor ? 'active jobs' : 'deliveries and orders'}</p>
+          <h1>{userType === 'agent' ? t('dashboard.agentDashboard') : t('dashboard.contractorDashboard')}</h1>
+          <p>{isAgent ? t('dashboard.manageClients') : t('dashboard.manageJobs')}</p>
         </div>
 
         {isAgent && (
@@ -150,12 +175,6 @@ const Dashboard: React.FC = () => {
               onClick={() => setActiveTab('contractors')}
             >
               Contractors
-            </button>
-            <button 
-              className={`tab ${activeTab === 'suppliers' ? 'active' : ''}`}
-              onClick={() => setActiveTab('suppliers')}
-            >
-              Suppliers
             </button>
           </div>
         )}
@@ -233,22 +252,6 @@ const Dashboard: React.FC = () => {
             </div>
           )}
 
-          {activeTab === 'suppliers' && (
-            <div className="suppliers-section">
-              <h3>Supplier Network</h3>
-              <div className="suppliers-grid">
-                {mockSuppliers.map(supplier => (
-                  <div key={supplier.id} className="supplier-card">
-                    <div className="supplier-info">
-                      <h4>{supplier.name}</h4>
-                      <p>{supplier.specialty}</p>
-                    </div>
-                    <button className="contact-button">Order</button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     );
@@ -260,16 +263,23 @@ const Dashboard: React.FC = () => {
         <div className="nav-brand">
           <h2>Assemble</h2>
         </div>
+        <div className="nav-links">
+          <button 
+            onClick={() => navigate('/reminders')}
+            className="nav-link-btn"
+          >
+            Reminders
+          </button>
+        </div>
         <div className="user-type-switcher">
           <select 
             value={userType} 
             onChange={(e) => handleUserTypeSwitch(e.target.value)}
             className="user-type-select"
           >
-            <option value="homeowner">Homeowner</option>
+            {userType === 'homeowner' && <option value="homeowner">Homeowner</option>}
             <option value="agent">Agent</option>
             <option value="contractor">Contractor</option>
-            <option value="supplier">Supplier</option>
           </select>
         </div>
       </nav>

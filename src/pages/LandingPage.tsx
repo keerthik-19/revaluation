@@ -1,24 +1,33 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { useTranslation } from '../context/TranslationContext';
+import PropertySearchForm from '../components/PropertySearchForm';
+import Logo from '../components/Logo';
+import LanguageSelector from '../components/LanguageSelector';
 import type { UserType } from '../types';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const { setUserType } = useUser();
-  const [searchAddress, setSearchAddress] = useState('');
+  const { t } = useTranslation();
 
   const handleUserTypeLogin = (type: UserType) => {
     setUserType(type);
     navigate('/dashboard');
   };
 
-  const handleEstimateSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchAddress.trim()) {
-      // Navigate to results page with the address
-      navigate(`/estimate-results?address=${encodeURIComponent(searchAddress.trim())}`);
-    }
+  const handleSearchStart = () => {
+    console.log('🔍 Property search started...');
+  };
+
+  const handleSearchComplete = (results: any) => {
+    console.log('✅ Property search completed:', results);
+  };
+
+  const handleSearchError = (error: string) => {
+    console.error('❌ Property search error:', error);
+    alert(`Search failed: ${error}`);
   };
 
   return (
@@ -27,28 +36,24 @@ const LandingPage: React.FC = () => {
         <nav className="top-nav">
           <div className="nav-container">
             <div className="logo">
-            <h2>Assemble</h2>
+              <Logo width={140} height={140} className="logo-icon" />
+              <h2>Assemble</h2>
             </div>
             <div className="nav-links">
-              <button 
+              <LanguageSelector />
+              <span className="nav-separator">|</span>
+              <button
                 className="nav-link"
                 onClick={() => handleUserTypeLogin('agent')}
               >
-                Login as Agent
+                {t('nav.loginAsAgent')}
               </button>
               <span className="nav-separator">|</span>
               <button 
                 className="nav-link"
                 onClick={() => handleUserTypeLogin('contractor')}
               >
-                Contractor
-              </button>
-              <span className="nav-separator">|</span>
-              <button 
-                className="nav-link"
-                onClick={() => handleUserTypeLogin('supplier')}
-              >
-                Supplier
+                {t('nav.contractor')}
               </button>
             </div>
           </div>
@@ -61,34 +66,22 @@ const LandingPage: React.FC = () => {
           <div className="hero-section">
             <div className="hero-content">
               <h1 className="main-title">
-                Discover Your Property's True Value
+                {t('landing.title')}
               </h1>
               <p className="main-subtitle">
-                Get instant property valuations and connect with trusted professionals for your next renovation project.
+                {t('landing.subtitle')}
               </p>
-              
-              {/* Main Search Form */}
-              <form onSubmit={handleEstimateSearch} className="hero-search-form">
-                <div className="hero-search-container">
-                  <input
-                    type="text"
-                    placeholder="Enter your property address for instant estimate"
-                    value={searchAddress}
-                    onChange={(e) => setSearchAddress(e.target.value)}
-                    className="hero-search-input"
-                  />
-                  <button type="submit" className="hero-search-btn">
-                    Get Free Estimate
-                  </button>
-                </div>
-                <p className="search-subtext">
-                  Free instant estimate • No signup required • Trusted by thousands
-                </p>
-              </form>
             </div>
           </div>
 
-
+          {/* Property Search Form */}
+          <div className="search-section">
+            <PropertySearchForm 
+              onSearchStart={handleSearchStart}
+              onSearchComplete={handleSearchComplete}
+              onSearchError={handleSearchError}
+            />
+          </div>
         </div>
       </main>
     </div>

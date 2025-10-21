@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { useTranslation } from '../context/TranslationContext';
 import type { User, Project } from '../types';
 
 const GuidedFlow: React.FC = () => {
   const navigate = useNavigate();
   const { setProject, setUserType } = useUser();
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedAgent, setSelectedAgent] = useState<User | null>(null);
   const [selectedContractor, setSelectedContractor] = useState<User | null>(null);
+  
+  // Calendar state
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
 
   const mockAgents: User[] = [
     {
@@ -48,6 +55,51 @@ const GuidedFlow: React.FC = () => {
     }
   ];
 
+  // Calendar utility functions
+  const getMonthName = (date: Date) => {
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  };
+
+  const getDaysInMonth = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  };
+
+  const isDateAvailable = (day: number) => {
+    const today = new Date();
+    const checkDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    
+    // Only allow future dates and exclude weekends for this demo
+    return checkDate >= today && checkDate.getDay() !== 0 && checkDate.getDay() !== 6;
+  };
+
+  const handleDateSelect = (day: number) => {
+    if (isDateAvailable(day)) {
+      const selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+      setSelectedDate(selectedDate);
+      setSelectedTime(null); // Reset time selection when date changes
+    }
+  };
+
+  const handlePrevMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    setSelectedDate(null);
+    setSelectedTime(null);
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+    setSelectedDate(null);
+    setSelectedTime(null);
+  };
+
+  const handleTimeSelect = (time: string) => {
+    setSelectedTime(time);
+  };
+
   const handleNext = () => {
     if (currentStep < 2) {
       setCurrentStep(currentStep + 1);
@@ -71,13 +123,27 @@ const GuidedFlow: React.FC = () => {
     // Set user as homeowner
     setUserType('homeowner');
     
-    // Create a mock project
+    // Create appointment summary if date and time are selected
+    const appointmentDetails = selectedDate && selectedTime 
+      ? `Consultation scheduled for ${selectedDate.toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          month: 'long', 
+          day: 'numeric', 
+          year: 'numeric' 
+        })} at ${selectedTime}`
+      : 'Consultation to be scheduled';
+    
+    // Create a mock project with progress photos
     const newProject: Project = {
       id: '1',
       name: 'Kitchen Renovation',
-      progress: 15,
+      progress: 35,
       budgetRange: '$25,000 - $35,000',
-      photos: [],
+      photos: [
+        'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop&crop=faces', // Before - old kitchen
+        'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=400&h=300&fit=crop&crop=faces', // Demolition phase
+        'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop&crop=faces', // Framing work
+      ],
       assignedTeam: {
         agent: selectedAgent || undefined,
         contractor: selectedContractor || undefined,
@@ -85,6 +151,12 @@ const GuidedFlow: React.FC = () => {
     };
     
     setProject(newProject);
+    
+    // Log the appointment details for demo purposes
+    if (selectedDate && selectedTime) {
+      console.log('✅ Appointment scheduled:', appointmentDetails);
+    }
+    
     navigate('/dashboard');
   };
 
@@ -94,8 +166,8 @@ const GuidedFlow: React.FC = () => {
         return (
           <div className="step-content">
             <div className="step-header">
-              <h2>Meet Your Agent</h2>
-              <p>Choose an agent who specializes in your type of project</p>
+              <h2>{t('flow.meetAgent')}</h2>
+              <p>{t('flow.chooseAgent')}</p>
             </div>
             <div className="enhanced-profile-cards">
               {mockAgents.map((agent) => (
@@ -145,8 +217,8 @@ const GuidedFlow: React.FC = () => {
         return (
           <div className="step-content">
             <div className="step-header">
-              <h2>Choose Your Contractor</h2>
-              <p>Select a verified contractor for your renovation</p>
+              <h2>{t('flow.chooseContractor')}</h2>
+              <p>{t('flow.selectContractor')}</p>
             </div>
             <div className="enhanced-profile-cards">
               {mockContractors.map((contractor) => (
@@ -195,64 +267,101 @@ const GuidedFlow: React.FC = () => {
         return (
           <div className="step-content scheduling">
             <div className="step-header">
-              <h2>Schedule Your Consultation</h2>
-              <p>Book a time to discuss your project with your team</p>
+              <h2>{t('flow.scheduleConsultation')}</h2>
+              <p>{t('flow.bookTime')}</p>
             </div>
             <div className="scheduling-container">
               <div className="calendar-section">
                 <div className="calendar-enhanced">
                   <div className="calendar-nav">
-                    <button className="nav-btn">‹</button>
-                    <h3 className="month-title">March 2024</h3>
-                    <button className="nav-btn">›</button>
+                    <button className="nav-btn" onClick={handlePrevMonth}>‹</button>
+                    <h3 className="month-title">{getMonthName(currentDate)}</h3>
+                    <button className="nav-btn" onClick={handleNextMonth}>›</button>
                   </div>
                   <div className="calendar-grid-enhanced">
                     {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
                       <div key={day} className="day-header">{day}</div>
                     ))}
-                    {Array.from({length: 42}, (_, i) => {
-                      const dayNumber = i - 6;
-                      const isCurrentMonth = dayNumber > 0 && dayNumber <= 31;
-                      const isAvailable = dayNumber > 0 && dayNumber <= 28 && dayNumber % 7 !== 0;
-                      return (
-                        <div 
-                          key={i} 
-                          className={`calendar-day-enhanced ${
-                            isCurrentMonth ? 'current-month' : 'other-month'
-                          } ${
-                            isAvailable ? 'available' : 'unavailable'
-                          }`}
-                        >
-                          {isCurrentMonth ? dayNumber : ''}
-                        </div>
-                      );
-                    })}
+                    {(() => {
+                      const daysInMonth = getDaysInMonth(currentDate);
+                      const firstDayOfWeek = getFirstDayOfMonth(currentDate);
+                      const days = [];
+                      
+                      // Empty cells for days before month starts
+                      for (let i = 0; i < firstDayOfWeek; i++) {
+                        days.push(
+                          <div key={`empty-${i}`} className="calendar-day-enhanced other-month">
+                          </div>
+                        );
+                      }
+                      
+                      // Days of the month
+                      for (let day = 1; day <= daysInMonth; day++) {
+                        const isAvailable = isDateAvailable(day);
+                        const isSelected = selectedDate && 
+                          selectedDate.getDate() === day && 
+                          selectedDate.getMonth() === currentDate.getMonth() &&
+                          selectedDate.getFullYear() === currentDate.getFullYear();
+                        
+                        days.push(
+                          <div 
+                            key={day}
+                            className={`calendar-day-enhanced current-month ${
+                              isAvailable ? 'available' : 'unavailable'
+                            } ${
+                              isSelected ? 'selected' : ''
+                            }`}
+                            onClick={() => handleDateSelect(day)}
+                            style={{ cursor: isAvailable ? 'pointer' : 'not-allowed' }}
+                          >
+                            {day}
+                          </div>
+                        );
+                      }
+                      
+                      return days;
+                    })()}
                   </div>
                 </div>
               </div>
               
               <div className="time-selection">
-                <h4 className="time-title">Available Times</h4>
+                <h4 className="time-title">
+                  {selectedDate 
+                    ? `${t('flow.availableTimes')} for ${selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}` 
+                    : t('flow.selectDate')
+                  }
+                </h4>
                 <div className="time-slots-enhanced">
-                  {['9:00 AM', '11:00 AM', '2:00 PM', '4:00 PM'].map(time => (
-                    <button key={time} className="time-slot-enhanced">
-                      <span className="time-text">{time}</span>
-                      <span className="duration-text">60 min</span>
-                    </button>
-                  ))}
+                  {selectedDate ? (
+                    ['9:00 AM', '11:00 AM', '2:00 PM', '4:00 PM'].map(time => (
+                      <button 
+                        key={time} 
+                        className={`time-slot-enhanced ${selectedTime === time ? 'selected' : ''}`}
+                        onClick={() => handleTimeSelect(time)}
+                      >
+                        <span className="time-text">{time}</span>
+                        <span className="duration-text">{t('time.60min')}</span>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="no-date-selected">
+                      <p>Please select a date first to view available appointment times.</p>
+                    </div>
+                  )}
                 </div>
                 <div className="consultation-details">
                   <div className="detail-item">
                     <span className="detail-icon"></span>
-                    <span>Meet with your agent & contractor</span>
+                    <span>{t('time.meetTeam')}</span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-icon"></span>
-                    <span>Review project scope & timeline</span>
+                    <span>{t('time.reviewScope')}</span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-icon"></span>
-                    <span>Discuss budget & financing options</span>
+                    <span>{t('time.discussBudget')}</span>
                   </div>
                 </div>
               </div>
@@ -298,18 +407,18 @@ const GuidedFlow: React.FC = () => {
           <div className="nav-left">
             {currentStep > 0 && (
               <button className="nav-button secondary" onClick={handleBack}>
-                Back
+                {t('flow.back')}
               </button>
             )}
           </div>
           <div className="nav-right">
             {currentStep === 2 && (
               <button className="nav-button secondary" onClick={handleSkip}>
-                Skip
+                {t('flow.skip')}
               </button>
             )}
             <button className="nav-button primary" onClick={handleNext}>
-              {currentStep === 2 ? 'Complete Setup' : 'Next'}
+              {currentStep === 2 ? t('flow.completeSetup') : t('flow.next')}
             </button>
           </div>
         </div>
