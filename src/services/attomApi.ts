@@ -187,7 +187,9 @@ export interface AttomAVM {
 class AttomApiService {
   // private baseUrl = 'https://api.gateway.attomdata.com/propertyapi/v1.0.0';
   private apiKey = import.meta.env.VITE_ATTOM_API_KEY;
-  private proxyUrl = 'http://localhost:3001/api/attom-property-search';
+  private proxyUrl = import.meta.env.VITE_PROXY_URL 
+    ? `${import.meta.env.VITE_PROXY_URL}/api/attom-property-search`
+    : 'http://localhost:3001/api/attom-property-search';
 
   /**
    * Search property details using ATTOM Property API
