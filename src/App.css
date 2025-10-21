@@ -2254,6 +2254,57 @@ button {
   border-bottom-color: var(--primary-green);
 }
 
+/* Renovation CTA Section - Used across pages */
+.renovation-cta-section {
+  margin-top: 3rem;
+  padding: 3rem 2rem;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.cta-content h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  margin: 0 0 1rem 0;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.cta-content p {
+  font-size: 1.1rem;
+  margin: 0 0 2rem 0;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+}
+
+.renovation-cta-section .start-renovation-btn {
+  background: var(--primary-green);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block;
+  width: auto;
+  letter-spacing: -0.01em;
+}
+
+.renovation-cta-section .start-renovation-btn:hover {
+  background: var(--dark-green);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .tab:hover {
   color: var(--primary-green);
   background: var(--light-green);

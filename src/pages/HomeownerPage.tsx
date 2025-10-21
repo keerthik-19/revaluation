@@ -10,8 +10,6 @@ const HomeownerPage: React.FC = () => {
   const { setUserType } = useUser();
   const [searchAddress, setSearchAddress] = useState('');
   const [showValuation, setShowValuation] = useState(false);
-  const [showBudgetEntry, setShowBudgetEntry] = useState(false);
-  const [budget, setBudget] = useState('');
   const [propertyData, setPropertyData] = useState<PropertyValuation | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -53,9 +51,6 @@ const HomeownerPage: React.FC = () => {
     }
   };
 
-  const handleBudgetEntry = () => {
-    setShowBudgetEntry(true);
-  };
 
   const handleTalkToAgent = () => {
     navigate('/guided-flow');
@@ -156,61 +151,15 @@ const HomeownerPage: React.FC = () => {
                 )}
               </div>
 
-              {/* Top Recommendation */}
-              <div className="top-recommendation-card">
-                <div className="recommendation-header">
-                  <h4 className="recommendation-label">Top Recommendation</h4>
-                  <span className="high-impact-badge">High Impact</span>
-                </div>
-                <div className="recommendation-details">
-                  <h5>Kitchen Renovation</h5>
-                  <p className="recommendation-description">
-                    Modern kitchen updates provide excellent ROI and appeal to buyers
-                  </p>
-                  
-                  <div className="investment-breakdown">
-                    <div className="investment-column">
-                      <span className="investment-label">Investment:</span>
-                      <span className="investment-value">$15,000 - $30,000</span>
-                    </div>
-                    <div className="value-increase-column">
-                      <span className="value-increase-label">Value Increase:</span>
-                      <span className="value-increase-amount">$30,000 - $45,000</span>
-                    </div>
-                  </div>
-
-                  <div className="roi-indicator">
-                    <div className="roi-checkmark">✓</div>
-                    <span>Excellent Return on Investment</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Budget Section */}
-              <div className="renovation-budget-section">
-                <h4 className="budget-section-title">Renovation Budget</h4>
-                <p className="budget-section-subtitle">
-                  Set your renovation budget to see tailored recommendations
-                </p>
-                
-                {!showBudgetEntry ? (
-                  <button className="enter-budget-btn" onClick={handleBudgetEntry}>
-                    Enter Budget
+              {/* Single Call-to-Action */}
+              <div className="renovation-cta-section">
+                <div className="cta-content">
+                  <h3>Start Your Renovation Journey</h3>
+                  <p>Connect with expert agents and contractors to bring your vision to life.</p>
+                  <button className="start-renovation-btn" onClick={handleTalkToAgent}>
+                    Begin Renovation Planning
                   </button>
-                ) : (
-                  <div className="budget-input-section">
-                    <input
-                      type="text"
-                      placeholder="Enter your budget (e.g., $25,000)"
-                      value={budget}
-                      onChange={(e) => setBudget(e.target.value)}
-                      className="budget-input-field"
-                    />
-                    <button className="talk-to-agent-btn" onClick={handleTalkToAgent}>
-                      Talk to Your Agent
-                    </button>
-                  </div>
-                )}
+                </div>
               </div>
             </div>
           )}

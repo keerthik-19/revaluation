@@ -11,8 +11,6 @@ const EstimateResults: React.FC = () => {
   const estimatedValue = Number(searchParams.get('value')) || 0;
   const valueLow = Number(searchParams.get('low')) || 0;
   const valueHigh = Number(searchParams.get('high')) || 0;
-  const [showBudgetEntry, setShowBudgetEntry] = useState(false);
-  const [budget, setBudget] = useState('');
   const [propertyData, setPropertyData] = useState<any>(null);
   
   // Helper function to format currency
@@ -41,14 +39,6 @@ const EstimateResults: React.FC = () => {
     navigate('/guided-flow');
   };
 
-  const handleBudgetEntry = () => {
-    setShowBudgetEntry(true);
-  };
-
-  const handleTalkToAgent = () => {
-    setUserType('homeowner');
-    navigate('/guided-flow');
-  };
 
   return (
     <div className="estimate-results-page">
@@ -182,60 +172,15 @@ const EstimateResults: React.FC = () => {
             </div>
           )}
 
-          {/* Renovation Recommendation */}
-          <div className="renovation-recommendation">
-            <h3>Top Renovation Opportunity</h3>
-            <div className="opportunity-card">
-              <div className="opportunity-header">
-                <h4>Kitchen Renovation</h4>
-                <span className="impact-badge">High Impact</span>
-              </div>
-              <div className="investment-details">
-                <div className="investment-item">
-                  <span className="label">Investment Range</span>
-                  <span className="value">$15,000 - $30,000</span>
-                </div>
-                <div className="investment-item">
-                  <span className="label">Value Increase</span>
-                  <span className="value positive">$30,000 - $45,000</span>
-                </div>
-                <div className="investment-item">
-                  <span className="label">Return on Investment</span>
-                  <span className="value highlight">150% ROI</span>
-                </div>
-              </div>
-            </div>
-            
-            <button className="start-renovation-btn" onClick={handleStartRenovationFlow}>
-              Begin Renovation Planning
-            </button>
-          </div>
-
-          {/* Budget Section */}
-          <div className="renovation-budget-section">
-            <h4 className="budget-section-title">Renovation Budget</h4>
-            <p className="budget-section-subtitle">
-              Set your renovation budget to see tailored recommendations
-            </p>
-            
-            {!showBudgetEntry ? (
-              <button className="enter-budget-btn" onClick={handleBudgetEntry}>
-                Enter Budget
+          {/* Single Call-to-Action */}
+          <div className="renovation-cta-section">
+            <div className="cta-content">
+              <h3>Ready to Start Your Renovation Project?</h3>
+              <p>Connect with verified professionals and get expert guidance for your home improvement project.</p>
+              <button className="start-renovation-btn" onClick={handleStartRenovationFlow}>
+                Begin Renovation Planning
               </button>
-            ) : (
-              <div className="budget-input-section">
-                <input
-                  type="text"
-                  placeholder="Enter your budget (e.g., $25,000)"
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
-                  className="budget-input-field"
-                />
-                <button className="talk-to-agent-btn" onClick={handleTalkToAgent}>
-                  Talk to Your Agent
-                </button>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
