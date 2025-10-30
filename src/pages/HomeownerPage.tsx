@@ -67,13 +67,6 @@ const HomeownerPage: React.FC = () => {
           <div className="nav-links">
             <button 
               className="nav-link" 
-              onClick={() => handleUserTypeLogin('agent')}
-            >
-              Login as Agent
-            </button>
-            <span className="nav-separator">|</span>
-            <button 
-              className="nav-link" 
               onClick={() => handleUserTypeLogin('contractor')}
             >
               Contractor

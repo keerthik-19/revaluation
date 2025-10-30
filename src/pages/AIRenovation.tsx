@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from '../context/TranslationContext';
 
 interface RenovationResult {
   beforeImage: string;
@@ -11,7 +10,6 @@ interface RenovationResult {
 
 const AIRenovation: React.FC = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [renovationStyle, setRenovationStyle] = useState<string>('modern');
   const [roomType, setRoomType] = useState<string>('kitchen');

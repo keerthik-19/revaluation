@@ -42,13 +42,6 @@ const LandingPage: React.FC = () => {
             <div className="nav-links">
               <LanguageSelector />
               <span className="nav-separator">|</span>
-              <button
-                className="nav-link"
-                onClick={() => handleUserTypeLogin('agent')}
-              >
-                {t('nav.loginAsAgent')}
-              </button>
-              <span className="nav-separator">|</span>
               <button 
                 className="nav-link"
                 onClick={() => handleUserTypeLogin('contractor')}

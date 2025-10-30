@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '../context/TranslationContext';
-import type { User } from '../types';
 
 const Dashboard: React.FC = () => {
   const { userType, project, setUserType } = useUser();
@@ -16,19 +15,6 @@ const Dashboard: React.FC = () => {
       navigate('/');
     }
   }, [userType, navigate]);
-
-  // Mock data for different user types
-  const mockClients: User[] = [
-    { id: '1', name: 'John Smith', email: 'john@example.com', type: 'homeowner' },
-    { id: '2', name: 'Emma Wilson', email: 'emma@example.com', type: 'homeowner' },
-    { id: '3', name: 'Robert Davis', email: 'robert@example.com', type: 'homeowner' }
-  ];
-
-  const mockContractors: User[] = [
-    { id: '4', name: 'David Rodriguez', email: 'david@example.com', type: 'contractor', specialty: 'Kitchen & Bathroom', verified: true },
-    { id: '5', name: 'Lisa Thompson', email: 'lisa@example.com', type: 'contractor', specialty: 'Structural Work', verified: true }
-  ];
-
 
   const mockActiveJobs = [
     { id: '1', clientName: 'John Smith', projectType: 'Kitchen Renovation', status: 'In Progress', deadline: '2024-04-15' },
@@ -138,8 +124,6 @@ const Dashboard: React.FC = () => {
   );
 
   const renderProfessionalDashboard = () => {
-    const isContractor = userType === 'contractor';
-
     return (
       <div className="dashboard-content">
         <div className="dashboard-header">
