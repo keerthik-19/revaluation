@@ -9,6 +9,8 @@ import Dashboard from './pages/Dashboard';
 import TestPage from './pages/TestPage';
 import PropertySearchPage from './pages/PropertySearchPage';
 import Reminders from './pages/Reminders';
+import AIRenovation from './pages/AIRenovation';
+import Permits from './pages/Permits';
 import './App.css';
 
 function App() {
@@ -25,6 +27,8 @@ function App() {
               <Route path="/guided-flow" element={<GuidedFlow />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/reminders" element={<Reminders />} />
+              <Route path="/ai-renovation" element={<AIRenovation />} />
+              <Route path="/permits" element={<Permits />} />
               <Route path="/test" element={<TestPage />} />
             </Routes>
           </div>

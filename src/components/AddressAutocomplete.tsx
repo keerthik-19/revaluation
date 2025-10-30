@@ -146,7 +146,7 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
           ))}
           <div className="suggestions-footer">
             <span className="powered-by">
-              📍 Address suggestions
+              Address suggestions
             </span>
           </div>
         </div>

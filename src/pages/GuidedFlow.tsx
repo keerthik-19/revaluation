@@ -9,32 +9,12 @@ const GuidedFlow: React.FC = () => {
   const { setProject, setUserType } = useUser();
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedAgent, setSelectedAgent] = useState<User | null>(null);
   const [selectedContractor, setSelectedContractor] = useState<User | null>(null);
   
   // Calendar state
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-
-  const mockAgents: User[] = [
-    {
-      id: '1',
-      name: 'Keerthi Kumar',
-      email: 'Keerthi@example.com',
-      type: 'agent',
-      rating: 4.9,
-      specialty: 'Luxury Renovations'
-    },
-    {
-      id: '2',
-      name: 'Ryan Anderson',
-      email: 'Ryan@example.com',
-      type: 'agent',
-      rating: 4.8,
-      specialty: 'Modern Home Design'
-    }
-  ];
 
   const mockContractors: User[] = [
     {
@@ -101,7 +81,7 @@ const GuidedFlow: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (currentStep < 2) {
+    if (currentStep < 1) {
       setCurrentStep(currentStep + 1);
     } else {
       // Complete the flow and redirect to dashboard
@@ -145,7 +125,6 @@ const GuidedFlow: React.FC = () => {
         'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop&crop=faces', // Framing work
       ],
       assignedTeam: {
-        agent: selectedAgent || undefined,
         contractor: selectedContractor || undefined,
       }
     };
@@ -163,57 +142,6 @@ const GuidedFlow: React.FC = () => {
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
-        return (
-          <div className="step-content">
-            <div className="step-header">
-              <h2>{t('flow.meetAgent')}</h2>
-              <p>{t('flow.chooseAgent')}</p>
-            </div>
-            <div className="enhanced-profile-cards">
-              {mockAgents.map((agent) => (
-                <div 
-                  key={agent.id} 
-                  className={`enhanced-profile-card ${selectedAgent?.id === agent.id ? 'selected' : ''}`}
-                  onClick={() => setSelectedAgent(agent)}
-                >
-                  <div className="profile-header">
-                    <div className="profile-badge">
-                      <span className="badge-text">Top Agent</span>
-                    </div>
-                  </div>
-                  <div className="profile-details">
-                    <h3 className="profile-name">{agent.name}</h3>
-                    <div className="rating-enhanced">
-                      <div className="stars-large">
-                        {'★'.repeat(Math.floor(agent.rating || 0))}
-                        {'☆'.repeat(5 - Math.floor(agent.rating || 0))}
-                      </div>
-                      <span className="rating-text">{agent.rating} • 127 reviews</span>
-                    </div>
-                    <p className="specialty-enhanced">{agent.specialty}</p>
-                    <div className="profile-stats">
-                      <div className="stat">
-                        <span className="stat-number">15+</span>
-                        <span className="stat-label">Years Experience</span>
-                      </div>
-                      <div className="stat">
-                        <span className="stat-number">$2.5M+</span>
-                        <span className="stat-label">Projects Completed</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="selection-indicator">
-                    {selectedAgent?.id === agent.id && (
-                      <div className="selected-checkmark">✓</div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      
-      case 1:
         return (
           <div className="step-content">
             <div className="step-header">
@@ -263,7 +191,7 @@ const GuidedFlow: React.FC = () => {
           </div>
         );
       
-      case 2:
+      case 1:
         return (
           <div className="step-content scheduling">
             <div className="step-header">
@@ -382,11 +310,11 @@ const GuidedFlow: React.FC = () => {
           <div className="progress-bar">
             <div 
               className="progress-fill" 
-              style={{ width: `${((currentStep + 1) / 3) * 100}%` }}
+              style={{ width: `${((currentStep + 1) / 2) * 100}%` }}
             />
           </div>
           <div className="step-indicators">
-            {[0, 1, 2].map((step) => (
+            {[0, 1].map((step) => (
               <div 
                 key={step} 
                 className={`step-indicator ${currentStep >= step ? 'active' : ''}`}
@@ -412,13 +340,13 @@ const GuidedFlow: React.FC = () => {
             )}
           </div>
           <div className="nav-right">
-            {currentStep === 2 && (
+            {currentStep === 1 && (
               <button className="nav-button secondary" onClick={handleSkip}>
                 {t('flow.skip')}
               </button>
             )}
             <button className="nav-button primary" onClick={handleNext}>
-              {currentStep === 2 ? t('flow.completeSetup') : t('flow.next')}
+              {currentStep === 1 ? t('flow.completeSetup') : t('flow.next')}
             </button>
           </div>
         </div>

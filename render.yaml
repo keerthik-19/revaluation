@@ -17,10 +17,7 @@ services:
     staticPublishPath: ./dist
     envVars:
       - key: VITE_PROXY_URL
-        fromService:
-          name: assemble-proxy
-          type: web
-          property: host
+        sync: false
     routes:
       - type: rewrite
         source: /*

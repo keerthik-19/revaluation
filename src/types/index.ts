@@ -1,4 +1,4 @@
-export type UserType = 'homeowner' | 'agent' | 'contractor' | 'supplier';
+export type UserType = 'homeowner' | 'contractor' | 'supplier';
 
 export interface User {
   id: string;
@@ -18,13 +18,12 @@ export interface Project {
   budgetRange: string;
   photos: string[];
   assignedTeam: {
-    agent?: User;
     contractor?: User;
     supplier?: User;
   };
 }
 
 export interface GuidedFlowStep {
-  type: 'agent' | 'contractor' | 'scheduling';
+  type: 'contractor' | 'scheduling';
   completed: boolean;
 }
