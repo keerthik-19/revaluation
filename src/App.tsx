@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { UserProvider } from './context/UserContext';
 import { TranslationProvider } from './context/TranslationContext';
 import LandingPage from './pages/LandingPage';
+import GreatLandingPage from './pages/GreatLandingPage';
 import HomeownerPage from './pages/HomeownerPage';
 import EstimateResults from './pages/EstimateResults';
 import GuidedFlow from './pages/GuidedFlow';
@@ -20,7 +21,8 @@ function App() {
         <Router>
           <div className="App">
             <Routes>
-              <Route path="/" element={<LandingPage />} />
+              <Route path="/" element={<GreatLandingPage />} />
+              <Route path="/tool" element={<LandingPage />} />
               <Route path="/search" element={<PropertySearchPage />} />
               <Route path="/homeowner" element={<HomeownerPage />} />
               <Route path="/estimate-results" element={<EstimateResults />} />

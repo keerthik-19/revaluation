@@ -1,0 +1,313 @@
+/* Simple Landing Page - Human, Not AI */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.simple-landing {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica', 'Arial', sans-serif;
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Hero */
+.hero {
+  padding: 80px 0 60px;
+  text-align: center;
+  background: #fff;
+}
+
+.hero-badge {
+  display: inline-block;
+  color: #10B981;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 32px;
+  padding: 8px 16px;
+  background: #ECFDF5;
+  border-radius: 6px;
+}
+
+.hero h1 {
+  font-size: clamp(38px, 5vw, 58px);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 24px;
+  color: #1a1a1a;
+  letter-spacing: -0.02em;
+}
+
+.hero-lead {
+  font-size: 21px;
+  color: #4a5568;
+  margin-bottom: 40px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+.cta-button {
+  background: #10B981;
+  color: white;
+  border: none;
+  padding: 18px 40px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.cta-button:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.cta-button.large {
+  padding: 22px 48px;
+  font-size: 20px;
+}
+
+.trust-line {
+  margin-top: 16px;
+  font-size: 15px;
+  color: #718096;
+}
+
+/* Stats Strip */
+.stats-strip {
+  background: #1a1a1a;
+  padding: 40px 0;
+}
+
+.stats-strip .container {
+  display: flex;
+  justify-content: space-around;
+  gap: 48px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 42px;
+  font-weight: 700;
+  color: #10B981;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 15px;
+  color: #a0aec0;
+}
+
+/* Problem Section */
+.problem {
+  padding: 80px 0;
+  background: #fff;
+}
+
+.problem h2,
+.how-it-works h2,
+.testimonials h2,
+.final-cta h2 {
+  font-size: clamp(32px, 4vw, 44px);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 16px;
+  color: #1a1a1a;
+}
+
+.section-intro {
+  text-align: center;
+  font-size: 19px;
+  color: #4a5568;
+  max-width: 700px;
+  margin: 0 auto 60px;
+  line-height: 1.6;
+}
+
+.pain-points {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 40px;
+  margin-top: 60px;
+}
+
+.pain {
+  text-align: center;
+}
+
+.pain-stat {
+  font-size: 52px;
+  font-weight: 800;
+  color: #DC2626;
+  margin-bottom: 16px;
+}
+
+.pain-text {
+  font-size: 17px;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+/* How It Works */
+.how-it-works {
+  padding: 80px 0;
+  background: #f7fafc;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 48px;
+  margin-top: 60px;
+}
+
+.step {
+  text-align: center;
+}
+
+.step-number {
+  width: 56px;
+  height: 56px;
+  background: #10B981;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 auto 20px;
+}
+
+.step h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #1a1a1a;
+}
+
+.step p {
+  font-size: 17px;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+/* Testimonials */
+.testimonials {
+  padding: 80px 0;
+  background: #fff;
+}
+
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+  margin-top: 60px;
+}
+
+.testimonial {
+  padding: 32px;
+  background: #f7fafc;
+  border-radius: 8px;
+  border-left: 4px solid #e2e8f0;
+}
+
+.testimonial.highlight {
+  background: #ECFDF5;
+  border-left-color: #10B981;
+}
+
+.quote {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #2d3748;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+.author {
+  font-size: 15px;
+  color: #718096;
+  font-weight: 600;
+}
+
+/* Final CTA */
+.final-cta {
+  padding: 100px 0;
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  text-align: center;
+  color: white;
+}
+
+.final-cta h2 {
+  color: white;
+  margin-bottom: 12px;
+}
+
+.final-cta p {
+  font-size: 20px;
+  margin-bottom: 32px;
+  opacity: 0.95;
+}
+
+.guarantee {
+  margin-top: 16px;
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+/* Footer */
+footer {
+  padding: 40px 0;
+  background: #1a1a1a;
+  text-align: center;
+}
+
+footer p {
+  color: #a0aec0;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero {
+    padding: 60px 0 40px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+  }
+
+  .hero-lead {
+    font-size: 18px;
+  }
+
+  .stats-strip .container {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .pain-points,
+  .steps,
+  .testimonial-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-button {
+    width: 100%;
+  }
+}

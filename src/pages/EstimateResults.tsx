@@ -36,11 +36,6 @@ const EstimateResults: React.FC = () => {
     }
   }, []);
 
-  const handleStartRenovationFlow = () => {
-    setUserType('homeowner');
-    navigate('/guided-flow');
-  };
-
   const handleBudgetEntry = () => {
     setShowBudgetEntry(true);
   };
@@ -187,7 +182,8 @@ const EstimateResults: React.FC = () => {
           <div className="renovation-recommendation">
             <h3>Top Renovation Opportunities</h3>
             
-            <div className="opportunity-card">
+            <div className="renovation-cards-grid">
+              <div className="opportunity-card">
               <div className="opportunity-header">
                 <h4>Kitchen Renovation</h4>
                 <span className="impact-badge">High Impact</span>
@@ -249,17 +245,14 @@ const EstimateResults: React.FC = () => {
                 </div>
               </div>
             </div>
-            
-            <button className="start-renovation-btn" onClick={handleStartRenovationFlow}>
-              Begin Renovation Planning
-            </button>
+            </div>
           </div>
 
-          {/* Budget Section */}
+          {/* Budget Section - Now flows naturally */}
           <div className="renovation-budget-section">
-            <h4 className="budget-section-title">Renovation Budget</h4>
+            <h4 className="budget-section-title">Ready to get started?</h4>
             <p className="budget-section-subtitle">
-              Set your renovation budget to see tailored recommendations
+              Enter your renovation budget and we'll connect you with the right professionals
             </p>
             
             {!showBudgetEntry ? (
