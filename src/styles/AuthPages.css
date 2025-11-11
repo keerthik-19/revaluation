@@ -1,6 +1,6 @@
 .auth-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,7 +12,7 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 2rem;
-  color: white;
+  color: #1a202c;
 }
 
 .auth-header h2 {
@@ -30,7 +30,8 @@
   background: white;
   border-radius: 16px;
   padding: 3rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
 }
 
 .auth-card h1 {
@@ -74,14 +75,14 @@
 }
 
 .user-type-btn:hover {
-  border-color: #667eea;
+  border-color: #2d3748;
   background: #f7fafc;
 }
 
 .user-type-btn.active {
-  border-color: #667eea;
+  border-color: #2d3748;
   background: #edf2f7;
-  color: #667eea;
+  color: #2d3748;
 }
 
 /* Form Styles */
@@ -119,8 +120,8 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #2d3748;
+  box-shadow: 0 0 0 3px rgba(45, 55, 72, 0.1);
 }
 
 .form-footer {
@@ -130,7 +131,7 @@
 }
 
 .forgot-password-link {
-  color: #667eea;
+  color: #2d3748;
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
@@ -142,19 +143,19 @@
 
 .auth-submit-btn {
   padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #2d3748;
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: background 0.2s, transform 0.2s;
 }
 
 .auth-submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  background: #1a202c;
+  transform: translateY(-1px);
 }
 
 .auth-submit-btn:active {
@@ -169,7 +170,7 @@
 }
 
 .auth-footer-text a {
-  color: #667eea;
+  color: #2d3748;
   text-decoration: none;
   font-weight: 600;
 }
