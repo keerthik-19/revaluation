@@ -12,6 +12,8 @@ import PropertySearchPage from './pages/PropertySearchPage';
 import Reminders from './pages/Reminders';
 import AIRenovation from './pages/AIRenovation';
 import Permits from './pages/Permits';
+import SignupPage from './pages/SignupPage';
+import LoginPage from './pages/LoginPage';
 import './App.css';
 
 function App() {
@@ -31,6 +33,8 @@ function App() {
               <Route path="/reminders" element={<Reminders />} />
               <Route path="/ai-renovation" element={<AIRenovation />} />
               <Route path="/permits" element={<Permits />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/login" element={<LoginPage />} />
               <Route path="/test" element={<TestPage />} />
             </Routes>
           </div>

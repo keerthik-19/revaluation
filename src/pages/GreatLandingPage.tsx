@@ -55,7 +55,7 @@ const GreatLandingPage = () => {
           </div>
           <div className="nav-right">
             <button className="nav-item" onClick={() => navigate('/dashboard')}>Dashboard</button>
-            <button className="nav-item-signin" onClick={() => navigate('/dashboard')}>Sign in</button>
+            <button className="nav-item-signin" onClick={() => navigate('/login')}>Sign in</button>
           </div>
         </div>
       </header>
