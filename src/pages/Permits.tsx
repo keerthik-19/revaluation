@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Card } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
+import { ArrowLeft, Plus, FileText, Calendar, MapPin } from 'lucide-react';
+import { LanguageSelector } from '../components/LanguageSelector';
 
 interface Permit {
   id: string;
@@ -53,160 +58,200 @@ const Permits: React.FC = () => {
     return permit.status === activeTab;
   });
 
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case 'approved': return 'status-badge approved';
-      case 'pending': return 'status-badge pending';
-      case 'rejected': return 'status-badge rejected';
-      case 'expired': return 'status-badge expired';
-      default: return 'status-badge';
-    }
-  };
-
   return (
-    <div className="permits-page">
-      <nav className="page-nav">
-        <div className="nav-brand">
-          <h2>Assemble</h2>
-        </div>
-        <button onClick={() => navigate('/dashboard')} className="back-btn">
-          ← Back to Dashboard
-        </button>
-      </nav>
-
-      <div className="permits-container">
-        <div className="permits-header">
-          <div>
-            <h1>Permits Management</h1>
-            <p>Track and manage construction permits for your projects</p>
+    <div className="min-h-screen bg-background">
+      <header className="border-b bg-card">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('/contractor/dashboard')}
+                className="hover:bg-accent"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <h1 className="text-2xl font-bold" style={{color: '#10B981'}}>Permits Management</h1>
+            </div>
+            <LanguageSelector />
           </div>
-          <button 
+        </div>
+      </header>
+
+      <main className="container mx-auto px-6 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-3xl font-bold mb-2" style={{color: '#10B981'}}>Permits</h2>
+            <p style={{color: '#10B981'}}>Track and manage construction permits for your projects</p>
+          </div>
+          <Button 
             onClick={() => setShowNewPermitForm(true)}
-            className="new-permit-btn"
+            style={{backgroundColor: '#059669', color: 'white'}}
+            className="gap-2"
           >
-            + New Permit Application
-          </button>
+            <Plus className="h-4 w-4" />
+            New Permit Application
+          </Button>
         </div>
 
-        <div className="permits-tabs">
-          <button 
-            className={`tab ${activeTab === 'all' ? 'active' : ''}`}
+        <div className="flex gap-2 mb-6">
+          <Button 
+            variant={activeTab === 'all' ? 'default' : 'outline'}
             onClick={() => setActiveTab('all')}
+            style={activeTab === 'all' ? {backgroundColor: '#059669', color: 'white'} : {borderColor: '#10B981', color: '#10B981'}}
           >
             All Permits ({mockPermits.length})
-          </button>
-          <button 
-            className={`tab ${activeTab === 'pending' ? 'active' : ''}`}
+          </Button>
+          <Button 
+            variant={activeTab === 'pending' ? 'default' : 'outline'}
             onClick={() => setActiveTab('pending')}
+            style={activeTab === 'pending' ? {backgroundColor: '#059669', color: 'white'} : {borderColor: '#10B981', color: '#10B981'}}
           >
             Pending ({mockPermits.filter(p => p.status === 'pending').length})
-          </button>
-          <button 
-            className={`tab ${activeTab === 'approved' ? 'active' : ''}`}
+          </Button>
+          <Button 
+            variant={activeTab === 'approved' ? 'default' : 'outline'}
             onClick={() => setActiveTab('approved')}
+            style={activeTab === 'approved' ? {backgroundColor: '#059669', color: 'white'} : {borderColor: '#10B981', color: '#10B981'}}
           >
             Approved ({mockPermits.filter(p => p.status === 'approved').length})
-          </button>
+          </Button>
         </div>
 
-        <div className="permits-list">
+        <div className="grid gap-4">
           {filteredPermits.map(permit => (
-            <div key={permit.id} className="permit-card">
-              <div className="permit-main">
-                <div className="permit-info">
-                  <div className="permit-header-row">
-                    <h3>{permit.projectName}</h3>
-                    <span className={getStatusBadgeClass(permit.status)}>
-                      {permit.status.charAt(0).toUpperCase() + permit.status.slice(1)}
-                    </span>
-                  </div>
-                  <p className="permit-type">{permit.permitType}</p>
-                  <p className="permit-address">{permit.address}</p>
-                  
-                  <div className="permit-dates">
-                    <div className="date-item">
-                      <span className="date-label">Submitted:</span>
-                      <span className="date-value">{permit.submittedDate}</span>
+            <Card key={permit.id} className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="text-xl font-semibold" style={{color: '#10B981'}}>
+                        {permit.projectName}
+                      </h3>
+                      <Badge variant={permit.status === 'approved' ? 'default' : 'secondary'}>
+                        {permit.status.charAt(0).toUpperCase() + permit.status.slice(1)}
+                      </Badge>
                     </div>
-                    {permit.expiryDate && (
-                      <div className="date-item">
-                        <span className="date-label">Expires:</span>
-                        <span className="date-value">{permit.expiryDate}</span>
+                    <div className="flex items-center gap-2 text-sm mb-2" style={{color: '#10B981'}}>
+                      <FileText className="h-4 w-4" />
+                      <span>{permit.permitType}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm mb-4" style={{color: '#10B981'}}>
+                      <MapPin className="h-4 w-4" />
+                      <span>{permit.address}</span>
+                    </div>
+                    
+                    <div className="flex flex-wrap gap-4 text-sm">
+                      <div className="flex items-center gap-2" style={{color: '#10B981'}}>
+                        <Calendar className="h-4 w-4" />
+                        <span>Submitted: {permit.submittedDate}</span>
                       </div>
-                    )}
-                    {permit.permitNumber && (
-                      <div className="date-item">
-                        <span className="date-label">Permit #:</span>
-                        <span className="date-value">{permit.permitNumber}</span>
-                      </div>
-                    )}
+                      {permit.expiryDate && (
+                        <div className="flex items-center gap-2" style={{color: '#10B981'}}>
+                          <Calendar className="h-4 w-4" />
+                          <span>Expires: {permit.expiryDate}</span>
+                        </div>
+                      )}
+                      {permit.permitNumber && (
+                        <div className="flex items-center gap-2" style={{color: '#10B981'}}>
+                          <FileText className="h-4 w-4" />
+                          <span>Permit #: {permit.permitNumber}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
+                
+                <div className="flex gap-2 pt-2">
+                  <Button variant="outline" size="sm" style={{borderColor: '#10B981', color: '#10B981'}}>
+                    View Details
+                  </Button>
+                  {permit.status === 'approved' && (
+                    <Button variant="outline" size="sm" style={{borderColor: '#10B981', color: '#10B981'}}>
+                      Download PDF
+                    </Button>
+                  )}
+                </div>
               </div>
-              
-              <div className="permit-actions">
-                <button className="action-btn view-btn">View Details</button>
-                {permit.status === 'approved' && (
-                  <button className="action-btn download-btn">Download PDF</button>
-                )}
-              </div>
-            </div>
+            </Card>
           ))}
         </div>
 
         {showNewPermitForm && (
-          <div className="modal-overlay" onClick={() => setShowNewPermitForm(false)}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <h2>New Permit Application</h2>
-                <button 
-                  className="close-btn"
-                  onClick={() => setShowNewPermitForm(false)}
-                >
-                  ×
-                </button>
-              </div>
-              <form className="permit-form">
-                <div className="form-group">
-                  <label>Project Name</label>
-                  <input type="text" placeholder="Enter project name" />
-                </div>
-                <div className="form-group">
-                  <label>Permit Type</label>
-                  <select>
-                    <option value="">Select permit type</option>
-                    <option value="building">Building Permit</option>
-                    <option value="electrical">Electrical Permit</option>
-                    <option value="plumbing">Plumbing Permit</option>
-                    <option value="mechanical">Mechanical Permit</option>
-                    <option value="demolition">Demolition Permit</option>
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Property Address</label>
-                  <input type="text" placeholder="Enter property address" />
-                </div>
-                <div className="form-group">
-                  <label>Description of Work</label>
-                  <textarea rows={4} placeholder="Describe the work to be done"></textarea>
-                </div>
-                <div className="form-actions">
-                  <button 
-                    type="button" 
-                    className="cancel-btn"
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowNewPermitForm(false)}>
+            <Card className="w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold" style={{color: '#10B981'}}>New Permit Application</h2>
+                  <Button 
+                    variant="ghost"
+                    size="icon"
                     onClick={() => setShowNewPermitForm(false)}
                   >
-                    Cancel
-                  </button>
-                  <button type="submit" className="submit-btn">
-                    Submit Application
-                  </button>
+                    ×
+                  </Button>
                 </div>
-              </form>
-            </div>
+                <form className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Project Name</label>
+                    <input 
+                      type="text" 
+                      placeholder="Enter project name" 
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Permit Type</label>
+                    <select className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                      <option value="">Select permit type</option>
+                      <option value="building">Building Permit</option>
+                      <option value="electrical">Electrical Permit</option>
+                      <option value="plumbing">Plumbing Permit</option>
+                      <option value="mechanical">Mechanical Permit</option>
+                      <option value="demolition">Demolition Permit</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Property Address</label>
+                    <input 
+                      type="text" 
+                      placeholder="Enter property address" 
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Description of Work</label>
+                    <textarea 
+                      rows={4} 
+                      placeholder="Describe the work to be done"
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    ></textarea>
+                  </div>
+                  <div className="flex gap-3 pt-4">
+                    <Button 
+                      type="button" 
+                      variant="outline"
+                      onClick={() => setShowNewPermitForm(false)}
+                      style={{borderColor: '#10B981', color: '#10B981'}}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button 
+                      type="submit" 
+                      style={{backgroundColor: '#059669', color: 'white'}}
+                      className="flex-1"
+                    >
+                      Submit Application
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </Card>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 };

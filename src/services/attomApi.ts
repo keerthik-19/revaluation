@@ -33,6 +33,65 @@ export interface PropertyValuation {
   };
 }
 
+// Building Permit Interfaces
+export interface BuildingPermit {
+  permitNumber?: string;
+  permitType?: string;
+  permitTypeDesc?: string;
+  permitClass?: string;
+  permitClassMapped?: string;
+  workType?: string;
+  workTypeDesc?: string;
+  description?: string;
+  issueDate?: string;
+  statusDate?: string;
+  status?: string;
+  statusDesc?: string;
+  cost?: number;
+  estimatedCost?: number;
+  sqft?: number;
+  contractorName?: string;
+  contractorLicense?: string;
+  contractorType?: string;
+  contractorPhone?: string;
+  completionDate?: string;
+  address?: {
+    line1?: string;
+    locality?: string;
+    countrySubd?: string;
+    postal1?: string;
+  };
+}
+
+export interface AttomBuildingPermitProperty {
+  identifier?: {
+    Id?: string;
+    fips?: string;
+    apn?: string;
+    attomId?: number;
+  };
+  address?: {
+    line1?: string;
+    line2?: string;
+    locality?: string;
+    countrySubd?: string;
+    postal1?: string;
+  };
+  permit?: BuildingPermit[];
+}
+
+export interface AttomBuildingPermitResponse {
+  status: {
+    version: string;
+    code: number;
+    msg: string;
+    total: number;
+    page: number;
+    pagesize: number;
+  };
+  property?: AttomBuildingPermitProperty[];
+}
+
 // ATTOM API Response Interfaces - Updated to match actual API response
 export interface AttomPropertyResponse {
   status: {
@@ -481,6 +540,154 @@ class AttomApiService {
     return baseValue;
   }
   */
+
+  /**
+   * Get building permits for a property by address
+   * @param searchParams Property search request
+   * @returns Promise resolving to building permits response
+   */
+  async getBuildingPermits(searchParams: PropertySearchRequest): Promise<AttomBuildingPermitResponse> {
+    if (!this.apiKey) {
+      throw new Error('ATTOM API Key is required. Please set VITE_ATTOM_API_KEY in your .env file.');
+    }
+
+    // Build query parameters for GET request
+    const params = new URLSearchParams();
+    
+    // address1 is the street address
+    if (searchParams.address) {
+      params.append('address1', searchParams.address);
+    }
+    
+    // address2 is city, state zip
+    let address2Parts = [];
+    if (searchParams.city) address2Parts.push(searchParams.city);
+    if (searchParams.state) {
+      if (searchParams.zip) {
+        address2Parts.push(`${searchParams.state} ${searchParams.zip}`);
+      } else {
+        address2Parts.push(searchParams.state);
+      }
+    } else if (searchParams.zip) {
+      address2Parts.push(searchParams.zip);
+    }
+    
+    if (address2Parts.length > 0) {
+      params.append('address2', address2Parts.join(', '));
+    }
+    
+    // Use direct ATTOM API call with proper headers
+    const url = `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/buildingpermits?${params.toString()}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'apikey': this.apiKey
+      }
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('ATTOM Building Permit API Error:', errorText);
+      console.error('Endpoint tried:', url);
+      throw new Error(`ATTOM Building Permit API failed: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    // Check if the response indicates "Not found"
+    if (data.status === 'Not found') {
+      // Return empty result instead of error
+      return {
+        status: {
+          version: '',
+          code: 404,
+          msg: 'No building permits found for this address',
+          total: 0,
+          page: 0,
+          pagesize: 0
+        },
+        property: []
+      };
+    }
+    
+    if (data.status?.code !== 0 && data.status?.code !== 400) {
+      throw new Error(`ATTOM API Error: ${data.status?.msg || 'Unknown error'}`);
+    }
+
+    return data;
+  }
+
+  /**
+   * Search building permits by contractor name or license number
+   * Note: ATTOM API may not support contractor-based search directly.
+   * This is a placeholder that would need specific endpoint support.
+   * @param contractorName Contractor name to search for
+   * @param licenseNumber Optional contractor license number
+   * @returns Promise resolving to building permits response
+   */
+  async searchPermitsByContractor(contractorName: string, licenseNumber?: string): Promise<AttomBuildingPermitResponse> {
+    if (!this.apiKey) {
+      throw new Error('ATTOM API Key is required. Please set VITE_ATTOM_API_KEY in your .env file.');
+    }
+
+    // Build query parameters
+    const params = new URLSearchParams();
+    params.append('contractorname', contractorName);
+    
+    if (licenseNumber) {
+      params.append('contractorlicense', licenseNumber);
+    }
+    
+    // Note: This endpoint may not exist in ATTOM API
+    // Contractor-based search might require a different API tier or endpoint
+    const url = `https://api.gateway.attomdata.com/propertyapi/v1.0.0/property/buildingpermits?${params.toString()}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'apikey': this.apiKey
+      }
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('ATTOM Building Permit API Error:', errorText);
+      console.error('Endpoint tried:', url);
+      
+      // If contractor search is not supported, return helpful error
+      if (response.status === 404 || response.status === 400) {
+        throw new Error('Contractor-based permit search is not available with your current ATTOM API subscription. Please contact ATTOM for advanced search capabilities.');
+      }
+      
+      throw new Error(`ATTOM Building Permit API failed: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    // Check if the response indicates "Not found"
+    if (data.status === 'Not found') {
+      return {
+        status: {
+          version: '',
+          code: 404,
+          msg: 'No building permits found for this contractor',
+          total: 0,
+          page: 0,
+          pagesize: 0
+        },
+        property: []
+      };
+    }
+    
+    if (data.status?.code !== 0 && data.status?.code !== 400) {
+      throw new Error(`ATTOM API Error: ${data.status?.msg || 'Unknown error'}`);
+    }
+
+    return data;
+  }
 
   /**
    * Parse address string into PropertySearchRequest
