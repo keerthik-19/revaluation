@@ -129,10 +129,10 @@ class SearchBugApiService {
       }
     });  
 
-    // Use proxy server to bypass CORS (relative URL for same-server deployment)
+    // Use proxy server to bypass CORS (localhost for dev, Render URL for production)
     const proxyUrl = import.meta.env.VITE_PROXY_URL 
       ? `${import.meta.env.VITE_PROXY_URL}/api/searchbug-property-search`
-      : '/api/searchbug-property-search';
+      : 'http://localhost:3001/api/searchbug-property-search';
     
     // Convert FormData to regular object for JSON
     const requestData: any = {
