@@ -3,11 +3,9 @@ services:
   - type: web
     name: assemble
     env: node
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --include=dev && npm run build
     startCommand: node proxy-server.js
     envVars:
-      - key: NODE_ENV
-        value: production
       - key: VITE_PROXY_URL
         sync: false
       - key: STRIPE_SECRET_KEY
