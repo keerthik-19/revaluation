@@ -28,7 +28,7 @@ const PaymentCheckout: React.FC<PaymentCheckoutProps> = ({
     // Create payment intent on component mount
     const createPaymentIntent = async () => {
       try {
-        const proxyUrl = import.meta.env.VITE_PROXY_URL || 'http://localhost:3001';
+        const proxyUrl = import.meta.env.VITE_PROXY_URL || '';
         const response = await fetch(`${proxyUrl}/api/create-payment-intent`, {
           method: 'POST',
           headers: {
