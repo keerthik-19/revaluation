@@ -429,7 +429,7 @@ app.patch('/api/invoices/:invoiceId/status', async (req, res) => {
 });
 
 // Catch-all route: serve React app for any non-API routes
-app.get('*', (req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
