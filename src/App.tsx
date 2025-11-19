@@ -10,9 +10,11 @@ import ContractorAuth from './pages/ContractorAuth';
 import Permits from './pages/Permits';
 import Tasks from './pages/Tasks';
 import Revenue from './pages/Revenue';
+import Materials from './pages/Materials';
 import Calendar from './pages/Calendar';
 import ContractorPermitsTracking from './pages/ContractorPermitsTracking';
 import ClientManagement from './pages/ClientManagement';
+import PaymentPage from './pages/PaymentPage';
 import './App.css';
 
 function App() {
@@ -32,8 +34,10 @@ function App() {
               <Route path="/contractor/permits-tracking" element={<ContractorPermitsTracking />} />
               <Route path="/contractor/tasks" element={<Tasks />} />
               <Route path="/contractor/revenue" element={<Revenue />} />
+              <Route path="/contractor/materials" element={<Materials />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/homeowner/dashboard" element={<EnhancedHomeownerDashboard />} />
+              <Route path="/payment" element={<PaymentPage />} />
             </Routes>
           </div>
       </Router>

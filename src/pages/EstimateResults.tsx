@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import './EstimateResults.css';
+import { ChevronRight, Lock, CheckCircle } from 'lucide-react';
 
 const EstimateResults: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -43,6 +44,16 @@ const EstimateResults: React.FC = () => {
   const handleTalkToAgent = () => {
     setUserType('homeowner');
     navigate('/guided-flow');
+  };
+
+  const handlePurchaseReport = () => {
+    navigate('/payment', {
+      state: {
+        amount: 49.99,
+        description: 'Complete Home Renovation ROI Report',
+        propertyAddress: address
+      }
+    });
   };
 
 
@@ -245,6 +256,59 @@ const EstimateResults: React.FC = () => {
                 </div>
               </div>
             </div>
+            </div>
+          </div>
+
+          {/* Premium Report CTA Section */}
+          <div className="premium-report-section">
+            <div className="premium-report-container">
+              <div className="premium-header">
+                <Lock size={24} className="lock-icon" />
+                <h2>Unlock the Complete Analysis</h2>
+              </div>
+              
+              <p className="premium-tagline">
+                Get a detailed renovation roadmap backed by local market data
+              </p>
+              
+              <div className="premium-benefits">
+                <div className="benefit-item">
+                  <CheckCircle size={20} className="benefit-icon" />
+                  <span>10+ renovation options analyzed for your property</span>
+                </div>
+                <div className="benefit-item">
+                  <CheckCircle size={20} className="benefit-icon" />
+                  <span>Contractor recommendations with verified ratings</span>
+                </div>
+                <div className="benefit-item">
+                  <CheckCircle size={20} className="benefit-icon" />
+                  <span>Permit requirements & timelines by local area</span>
+                </div>
+                <div className="benefit-item">
+                  <CheckCircle size={20} className="benefit-icon" />
+                  <span>Month-by-month project execution plan</span>
+                </div>
+                <div className="benefit-item">
+                  <CheckCircle size={20} className="benefit-icon" />
+                  <span>Direct access to Assemble support team</span>
+                </div>
+              </div>
+              
+              <div className="premium-price-section">
+                <div className="price-info">
+                  <span className="price-label">One-time investment:</span>
+                  <span className="price-value">$49.99</span>
+                </div>
+                <button 
+                  className="purchase-report-btn" 
+                  onClick={handlePurchaseReport}
+                >
+                  Get Full Report
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+              
+              <p className="secure-note">🔒 Secure payment • Instant access • 100% satisfaction guaranteed</p>
             </div>
           </div>
 

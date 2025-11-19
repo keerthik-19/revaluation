@@ -1,12 +1,26 @@
 import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
+import Stripe from 'stripe';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
+
+// Initialize Stripe
+const stripe = process.env.STRIPE_SECRET_KEY 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY)
+  : null;
+
+if (!stripe) {
+  console.warn('⚠️  Stripe secret key not found. Payment endpoints will be disabled.');
+}
 
 // SearchBug Property Records API proxy
 app.post('/api/searchbug-property-search', async (req, res) => {
@@ -192,6 +206,216 @@ app.get('/api/test-attom', async (req, res) => {
     });
   } catch (error) {
     console.error('ATTOM Test Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Stripe payment intent endpoint
+app.post('/api/create-payment-intent', async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Payment processing is not configured' });
+  }
+
+  try {
+    const { amount, currency = 'usd', description, metadata } = req.body;
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ error: 'Valid amount is required' });
+    }
+
+    console.log('Creating payment intent:', { amount, currency, description });
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Convert to cents
+      currency,
+      description,
+      metadata: metadata || {},
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+
+    res.json({
+      clientSecret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id,
+    });
+  } catch (error) {
+    console.error('Stripe payment intent error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Confirm payment status endpoint
+app.get('/api/payment-status/:paymentIntentId', async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Payment processing is not configured' });
+  }
+
+  try {
+    const { paymentIntentId } = req.params;
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    
+    res.json({
+      status: paymentIntent.status,
+      amount: paymentIntent.amount / 100,
+      currency: paymentIntent.currency,
+    });
+  } catch (error) {
+    console.error('Stripe payment status error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Invoice Management Endpoints
+
+// Get all invoices for a project
+app.get('/api/invoices/project/:projectId', (req, res) => {
+  try {
+    const { projectId } = req.params;
+    // Mock data - will be replaced with database queries
+    const invoices = [
+      {
+        id: `invoice-1-${projectId}`,
+        projectId,
+        milestoneId: `milestone-10-${projectId}`,
+        invoiceNumber: `INV-${projectId.slice(0, 8)}-001`,
+        homeownerId: 'homeowner-1',
+        contractorId: 'contractor-1',
+        amount: 1000,
+        percentage: 10,
+        description: 'Foundation and site preparation',
+        issueDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        dueDate: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+        status: 'paid',
+        paidDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
+        paymentMethod: 'stripe',
+      },
+      {
+        id: `invoice-2-${projectId}`,
+        projectId,
+        milestoneId: `milestone-20-${projectId}`,
+        invoiceNumber: `INV-${projectId.slice(0, 8)}-002`,
+        homeownerId: 'homeowner-1',
+        contractorId: 'contractor-1',
+        amount: 1000,
+        percentage: 20,
+        description: 'Framing and structural work',
+        issueDate: new Date(Date.now() - 23 * 24 * 60 * 60 * 1000).toISOString(),
+        dueDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        status: 'paid',
+        paidDate: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString(),
+        paymentMethod: 'stripe',
+      },
+      {
+        id: `invoice-3-${projectId}`,
+        projectId,
+        milestoneId: `milestone-30-${projectId}`,
+        invoiceNumber: `INV-${projectId.slice(0, 8)}-003`,
+        homeownerId: 'homeowner-1',
+        contractorId: 'contractor-1',
+        amount: 1000,
+        percentage: 30,
+        description: 'Electrical and plumbing installation',
+        issueDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000).toISOString(),
+        dueDate: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000).toISOString(),
+        status: 'sent',
+      },
+    ];
+    
+    res.json(invoices);
+  } catch (error) {
+    console.error('Error fetching invoices:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get a single invoice
+app.get('/api/invoices/:invoiceId', (req, res) => {
+  try {
+    const { invoiceId } = req.params;
+    // Mock data - will be replaced with database query
+    const invoice = {
+      id: invoiceId,
+      projectId: 'project-1',
+      milestoneId: 'milestone-30',
+      invoiceNumber: `INV-${invoiceId.slice(0, 8)}-003`,
+      homeownerId: 'homeowner-1',
+      contractorId: 'contractor-1',
+      amount: 1000,
+      percentage: 30,
+      description: 'Electrical and plumbing installation',
+      issueDate: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000).toISOString(),
+      dueDate: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000).toISOString(),
+      status: 'sent',
+    };
+    
+    res.json(invoice);
+  } catch (error) {
+    console.error('Error fetching invoice:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create payment intent for an invoice
+app.post('/api/invoices/:invoiceId/payment-intent', async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: 'Payment processing is not configured' });
+  }
+
+  try {
+    const { invoiceId } = req.params;
+    const { amount, description } = req.body;
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ error: 'Valid amount is required' });
+    }
+
+    console.log('Creating payment intent for invoice:', { invoiceId, amount, description });
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100), // Convert to cents
+      currency: 'usd',
+      description: description || `Invoice ${invoiceId}`,
+      metadata: {
+        invoiceId,
+        type: 'invoice_payment',
+      },
+    });
+
+    res.json({
+      clientSecret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id,
+    });
+  } catch (error) {
+    console.error('Error creating payment intent for invoice:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update invoice payment status
+app.patch('/api/invoices/:invoiceId/status', async (req, res) => {
+  try {
+    const { invoiceId } = req.params;
+    const { status, paymentIntentId, paymentMethod } = req.body;
+
+    if (!status) {
+      return res.status(400).json({ error: 'Status is required' });
+    }
+
+    console.log('Updating invoice status:', { invoiceId, status, paymentIntentId });
+
+    // Mock response - will be replaced with database update
+    const updatedInvoice = {
+      id: invoiceId,
+      status,
+      paidDate: status === 'paid' ? new Date().toISOString() : undefined,
+      paymentIntentId,
+      paymentMethod,
+    };
+
+    res.json(updatedInvoice);
+  } catch (error) {
+    console.error('Error updating invoice status:', error);
     res.status(500).json({ error: error.message });
   }
 });

@@ -1,12 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Progress } from "../components/ui/progress";
-import { FileText, MessageSquare, Camera, Clock, TrendingUp, Home, Search, Send, X } from "lucide-react";
+import { FileText, MessageSquare, Camera, Clock, TrendingUp, Home, Search, Send, X, CreditCard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LanguageSelector } from "../components/LanguageSelector";
 import { useLanguage } from "../context/LanguageContext";
 import AIVisualizer from "../components/AIVisualizer";
 import BuildingPermitsHistory from "../components/BuildingPermitsHistory";
+import PaymentsTab from "../components/PaymentsTab";
 import { useState } from "react";
 import { attomApiService } from "../services/attomApi";
 import type { PropertySearchRequest } from "../services/attomApi";
@@ -14,6 +15,7 @@ import type { PropertySearchRequest } from "../services/attomApi";
 const EnhancedHomeownerDashboard = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const [activeTab, setActiveTab] = useState<'overview' | 'payments'>('overview');
   const [projectProgress] = useState(65);
   const [propertyData, setPropertyData] = useState<any>(null);
   const [addressInput, setAddressInput] = useState("");
@@ -106,6 +108,46 @@ const EnhancedHomeownerDashboard = () => {
           </Card>
         </div>
 
+        {/* Tab Navigation */}
+        <div className="mb-8 border-b border-gray-200">
+          <div className="flex gap-8">
+            <button
+              onClick={() => setActiveTab('overview')}
+              className={`pb-4 px-2 font-semibold transition-colors ${
+                activeTab === 'overview'
+                  ? 'border-b-2 border-green-500 text-green-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Overview
+            </button>
+            <button
+              onClick={() => setActiveTab('payments')}
+              className={`pb-4 px-2 font-semibold transition-colors flex items-center gap-2 ${
+                activeTab === 'payments'
+                  ? 'border-b-2 border-green-500 text-green-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <CreditCard size={18} />
+              Payments
+            </button>
+          </div>
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === 'payments' && (
+          <div className="mb-8">
+            <PaymentsTab
+              projectId="project-kitchen-remodel"
+              projectTitle="Kitchen Remodel"
+              totalBudget={10000}
+            />
+          </div>
+        )}
+
+        {activeTab === 'overview' && (
+          <>
         {/* Property Value and AI Visualizer Side by Side */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           {/* Property Value Section */}
@@ -349,6 +391,8 @@ const EnhancedHomeownerDashboard = () => {
             </Button>
           </CardContent>
         </Card>
+          </>
+        )}
       </main>
 
       {/* Message Contractor Modal */}
