@@ -1,24 +1,14 @@
 services:
-  # Backend proxy server
+  # Combined frontend + backend service
   - type: web
-    name: assemble-proxy
+    name: assemble
     env: node
-    buildCommand: npm install
+    buildCommand: npm install && npm run build
     startCommand: node proxy-server.js
     envVars:
       - key: NODE_ENV
         value: production
-
-  # Frontend static site
-  - type: web
-    name: assemble
-    env: static
-    buildCommand: npm run build
-    staticPublishPath: ./dist
-    envVars:
       - key: VITE_PROXY_URL
         sync: false
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+      - key: STRIPE_SECRET_KEY
+        sync: false
