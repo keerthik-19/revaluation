@@ -8,7 +8,7 @@ interface LogoProps {
   onClick?: () => void;
 }
 
-const Logo: React.FC<LogoProps> = ({ width = 60, height = 60, className = '', onClick }) => {
+const Logo: React.FC<LogoProps> = ({ width = 120, height = 120, className = '', onClick }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -20,8 +20,8 @@ const Logo: React.FC<LogoProps> = ({ width = 60, height = 60, className = '', on
   };
 
   return (
-    <img 
-      src="/logo.svg" 
+    <img
+      src="/logo.png"
       alt="Assemble Logo"
       width={width}
       height={height}

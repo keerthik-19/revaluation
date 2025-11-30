@@ -37,7 +37,7 @@ const LandingPage: React.FC = () => {
           <div className="nav-container">
             <div className="logo">
               <Logo width={140} height={140} className="logo-icon" />
-              <h2>Assemble</h2>
+              <h2>AYKA</h2>
             </div>
             <div className="nav-links">
               <LanguageSelector />

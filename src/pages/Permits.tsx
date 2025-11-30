@@ -72,7 +72,7 @@ const Permits: React.FC = () => {
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-              <h1 className="text-2xl font-bold" style={{color: '#10B981'}}>Permits Management</h1>
+              <h1 className="text-2xl font-bold" style={{color: 'black'}}>Permits Management</h1>
             </div>
             <LanguageSelector />
           </div>
@@ -82,12 +82,12 @@ const Permits: React.FC = () => {
       <main className="container mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-3xl font-bold mb-2" style={{color: '#10B981'}}>Permits</h2>
-            <p style={{color: '#10B981'}}>Track and manage construction permits for your projects</p>
+            <h2 className="text-3xl font-bold mb-2" style={{color: 'black'}}>Permits</h2>
+            <p className="text-gray-600">Track and manage construction permits for your projects</p>
           </div>
           <Button 
             onClick={() => setShowNewPermitForm(true)}
-            style={{backgroundColor: '#059669', color: 'white'}}
+            style={{backgroundColor: '#3B82F6', color: 'white'}}
             className="gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -99,62 +99,80 @@ const Permits: React.FC = () => {
           <Button 
             variant={activeTab === 'all' ? 'default' : 'outline'}
             onClick={() => setActiveTab('all')}
-            style={activeTab === 'all' ? {backgroundColor: '#059669', color: 'white'} : {borderColor: '#10B981', color: '#10B981'}}
+            style={activeTab === 'all' ? {backgroundColor: '#3B82F6', color: 'white'} : {borderColor: '#6B7280', color: '#6B7280'}}
           >
             All Permits ({mockPermits.length})
           </Button>
           <Button 
             variant={activeTab === 'pending' ? 'default' : 'outline'}
             onClick={() => setActiveTab('pending')}
-            style={activeTab === 'pending' ? {backgroundColor: '#059669', color: 'white'} : {borderColor: '#10B981', color: '#10B981'}}
+            style={activeTab === 'pending' ? {backgroundColor: '#F59E0B', color: 'white'} : {borderColor: '#6B7280', color: '#6B7280'}}
           >
             Pending ({mockPermits.filter(p => p.status === 'pending').length})
           </Button>
           <Button 
             variant={activeTab === 'approved' ? 'default' : 'outline'}
             onClick={() => setActiveTab('approved')}
-            style={activeTab === 'approved' ? {backgroundColor: '#059669', color: 'white'} : {borderColor: '#10B981', color: '#10B981'}}
+            style={activeTab === 'approved' ? {backgroundColor: '#10B981', color: 'white'} : {borderColor: '#6B7280', color: '#6B7280'}}
           >
             Approved ({mockPermits.filter(p => p.status === 'approved').length})
           </Button>
         </div>
 
         <div className="grid gap-4">
-          {filteredPermits.map(permit => (
-            <Card key={permit.id} className="p-6">
+          {filteredPermits.map(permit => {
+            const statusColor = 
+              permit.status === 'approved' ? '#10B981' :
+              permit.status === 'pending' ? '#F59E0B' :
+              permit.status === 'rejected' ? '#EF4444' : '#6B7280';
+            
+            return (
+            <Card key={permit.id} className="p-6 border-l-4" style={{borderLeftColor: statusColor}}>
               <div className="space-y-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-xl font-semibold" style={{color: '#10B981'}}>
-                        {permit.projectName}
-                      </h3>
-                      <Badge variant={permit.status === 'approved' ? 'default' : 'secondary'}>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg" style={{backgroundColor: statusColor + '20'}}>
+                          <FileText className="h-5 w-5" style={{color: statusColor}} />
+                        </div>
+                        <h3 className="text-xl font-semibold text-gray-800">
+                          {permit.projectName}
+                        </h3>
+                      </div>
+                      <Badge 
+                        className="ml-2"
+                        style={{
+                          backgroundColor: statusColor + '20',
+                          color: statusColor,
+                          borderColor: statusColor
+                        }}
+                      >
                         {permit.status.charAt(0).toUpperCase() + permit.status.slice(1)}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2 text-sm mb-2" style={{color: '#10B981'}}>
+                    <div className="flex items-center gap-2 text-sm mb-2 text-gray-600">
                       <FileText className="h-4 w-4" />
                       <span>{permit.permitType}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm mb-4" style={{color: '#10B981'}}>
+                    <div className="flex items-center gap-2 text-sm mb-4 text-gray-600">
                       <MapPin className="h-4 w-4" />
                       <span>{permit.address}</span>
                     </div>
                     
-                    <div className="flex flex-wrap gap-4 text-sm">
-                      <div className="flex items-center gap-2" style={{color: '#10B981'}}>
+                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
                         <span>Submitted: {permit.submittedDate}</span>
                       </div>
                       {permit.expiryDate && (
-                        <div className="flex items-center gap-2" style={{color: '#10B981'}}>
+                        <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
                           <span>Expires: {permit.expiryDate}</span>
                         </div>
                       )}
                       {permit.permitNumber && (
-                        <div className="flex items-center gap-2" style={{color: '#10B981'}}>
+                        <div className="flex items-center gap-2">
                           <FileText className="h-4 w-4" />
                           <span>Permit #: {permit.permitNumber}</span>
                         </div>
@@ -164,7 +182,7 @@ const Permits: React.FC = () => {
                 </div>
                 
                 <div className="flex gap-2 pt-2">
-                  <Button variant="outline" size="sm" style={{borderColor: '#10B981', color: '#10B981'}}>
+                  <Button variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50">
                     View Details
                   </Button>
                   {permit.status === 'approved' && (
@@ -175,7 +193,8 @@ const Permits: React.FC = () => {
                 </div>
               </div>
             </Card>
-          ))}
+          );
+          })}
         </div>
 
         {showNewPermitForm && (

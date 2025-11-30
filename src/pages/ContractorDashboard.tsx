@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { Calendar, DollarSign, FileText, CheckSquare, Users, Plus, Mail, X, TrendingUp, Link as LinkIcon, Copy, Package, MessageSquare, Send } from "lucide-react";
+import { Calendar, DollarSign, FileText, CheckSquare, Users, Plus, Mail, X, TrendingUp, Link as LinkIcon, Copy, Package, MessageSquare, Image, Send } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { LanguageSelector } from "../components/LanguageSelector";
 import { Progress } from "../components/ui/progress";
+import ContractorTimeline from "../components/ContractorTimeline";
+import PaymentTracker from "../components/PaymentTracker";
+import MaterialsTracker from "../components/MaterialsTracker";
+import TeamManagement from "../components/TeamManagement";
 
 interface Client {
   id: string;
@@ -17,6 +21,7 @@ interface Client {
   address?: string;
   startDate?: string;
   budget?: number;
+  imageUrl?: string;
 }
 
 const ContractorDashboard = () => {
@@ -28,12 +33,13 @@ const ContractorDashboard = () => {
   const [showMessagingModal, setShowMessagingModal] = useState(false);
   const [showClientDetailsModal, setShowClientDetailsModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [detailsTab, setDetailsTab] = useState<'timeline' | 'payments' | 'materials' | 'team'>('timeline');
   const [newProgress, setNewProgress] = useState(0);
   const [copiedLink, setCopiedLink] = useState(false);
   const [messageInput, setMessageInput] = useState("");
-  
+
   // Mock message thread data
-  const [messages, setMessages] = useState<{[key: string]: Array<{id: string, sender: 'contractor' | 'client', text: string, timestamp: string}>}>({
+  const [messages, setMessages] = useState<{ [key: string]: Array<{ id: string, sender: 'contractor' | 'client', text: string, timestamp: string }> }>({
     "1": [
       { id: "1", sender: "client", text: "Hi! When can we expect the cabinets to be installed?", timestamp: "2024-11-12T10:30:00" },
       { id: "2", sender: "contractor", text: "Hello! The cabinets are scheduled to be installed this Thursday, November 14th.", timestamp: "2024-11-12T11:15:00" },
@@ -52,41 +58,44 @@ const ContractorDashboard = () => {
 
   // Mock data - replace with real data later
   const [clients, setClients] = useState<Client[]>([
-    { 
-      id: "1", 
-      name: "John Smith", 
-      project: "Kitchen Remodel", 
-      status: "In Progress", 
+    {
+      id: "1",
+      name: "John Smith",
+      project: "Kitchen Remodel",
+      status: "In Progress",
       progress: 65,
       email: "john.smith@email.com",
       phone: "(555) 123-4567",
       address: "123 Main St, Boston, MA",
       startDate: "2024-10-01",
-      budget: 45000
+      budget: 45000,
+      imageUrl: "https://images.unsplash.com/photo-1556911220-bff31c812dba?w=400&h=300&fit=crop"
     },
-    { 
-      id: "2", 
-      name: "Sarah Johnson", 
-      project: "Bathroom Renovation", 
-      status: "Planning", 
+    {
+      id: "2",
+      name: "Sarah Johnson",
+      project: "Bathroom Renovation",
+      status: "Planning",
       progress: 25,
       email: "sarah.j@email.com",
       phone: "(555) 234-5678",
       address: "456 Oak Ave, Cambridge, MA",
       startDate: "2024-10-20",
-      budget: 28000
+      budget: 28000,
+      imageUrl: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=400&h=300&fit=crop"
     },
-    { 
-      id: "3", 
-      name: "Mike Davis", 
-      project: "Deck Addition", 
-      status: "In Progress", 
+    {
+      id: "3",
+      name: "Mike Davis",
+      project: "Deck Addition",
+      status: "In Progress",
       progress: 80,
       email: "mike.davis@email.com",
       phone: "(555) 345-6789",
       address: "789 Pine Rd, Somerville, MA",
       startDate: "2024-09-15",
-      budget: 35000
+      budget: 35000,
+      imageUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop"
     },
   ]);
 
@@ -127,14 +136,14 @@ const ContractorDashboard = () => {
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!messageInput.trim() || !selectedClient) return;
-    
+
     const newMessage = {
       id: String(Date.now()),
       sender: 'contractor' as const,
       text: messageInput,
       timestamp: new Date().toISOString()
     };
-    
+
     setMessages(prev => ({
       ...prev,
       [selectedClient.id]: [...(prev[selectedClient.id] || []), newMessage]
@@ -144,7 +153,7 @@ const ContractorDashboard = () => {
 
   const saveProgress = () => {
     if (selectedClient) {
-      setClients(clients.map(c => 
+      setClients(clients.map(c =>
         c.id === selectedClient.id ? { ...c, progress: newProgress } : c
       ));
       setShowProgressModal(false);
@@ -171,181 +180,185 @@ const ContractorDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
+    <div className="min-h-screen bg-background font-sans">
+      <header className="border-b bg-card sticky top-0 z-40">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold" style={{color: '#10B981'}}>Contractor Dashboard</h1>
-            <div className="flex items-center gap-3">
-              <LanguageSelector />
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => navigate("/contractor/clients")}
-                className="gap-2"
-                style={{borderColor: '#10B981', color: '#10B981'}}
-              >
-                <Users className="h-4 w-4" />
-                Clients
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => navigate("/contractor/permits")}
-                className="gap-2"
-                style={{borderColor: '#10B981', color: '#10B981'}}
-              >
-                <FileText className="h-4 w-4" />
-                Permits
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => navigate("/contractor/tasks")}
-                className="gap-2"
-                style={{borderColor: '#10B981', color: '#10B981'}}
-              >
-                <CheckSquare className="h-4 w-4" />
-                Tasks
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => navigate("/contractor/revenue")}
-                className="gap-2"
-                style={{borderColor: '#10B981', color: '#10B981'}}
-              >
-                <DollarSign className="h-4 w-4" />
-                Revenue
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => navigate("/contractor/materials")}
-                className="gap-2"
-                style={{borderColor: '#10B981', color: '#10B981'}}
-              >
-                <Package className="h-4 w-4" />
-                Materials
-              </Button>
-              <Button
-                variant="default"
-                size="lg"
-                onClick={() => navigate("/calendar")}
-                className="gap-2"
-                style={{backgroundColor: '#059669', color: 'white'}}
-              >
-                <Calendar className="h-5 w-5" />
-                Calendar
-              </Button>
+            {/* Logo & Brand */}
+            <div className="flex items-center gap-12">
+              <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigate("/")}>
+                <img
+                  src="/logo.png"
+                  alt="Assemble Logo"
+                  className="h-16 w-auto object-contain transition-transform group-hover:scale-105"
+                />
+              </div>
+
+              {/* Navigation Links */}
+              <nav className="hidden md:flex items-center gap-6">
+                {[
+                  { label: "Clients", icon: Users, path: "/contractor/clients" },
+                  { label: "Permits", icon: FileText, path: "/contractor/permits" },
+                  { label: "Revenue", icon: DollarSign, path: "/contractor/revenue" },
+                  { label: "Materials", icon: Package, path: "/contractor/materials" },
+                  { label: "Drawings", icon: Image, path: "/contractor/drawings" },
+                  { label: "Calendar", icon: Calendar, path: "/calendar" },
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    onClick={() => navigate(item.path)}
+                    className="flex items-center gap-2 text-muted-foreground hover:text-primary font-medium text-sm transition-colors"
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.label}
+                  </button>
+                ))}
+              </nav>
             </div>
+
+            {/* Language Selector */}
+            <LanguageSelector />
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-6 py-8">
-        <div className="mb-8 flex items-start justify-between">
+        <div className="mb-8 flex items-end justify-between">
           <div>
-            <h2 className="text-3xl font-bold mb-2" style={{color: '#10B981'}}>Client Management</h2>
-            <p style={{color: '#10B981'}}>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground mb-2">Client Management</h2>
+            <p className="text-muted-foreground">
               Manage permits, tasks, and client dashboards
             </p>
           </div>
-          <Button className="gap-2" style={{backgroundColor: '#059669', color: 'white'}} onClick={() => setShowAddClientModal(true)}>
+          <Button className="gap-2 shadow-sm hover:shadow-md" onClick={() => setShowAddClientModal(true)}>
             <Plus className="h-4 w-4" />
             Add Client
           </Button>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {clients.map((client) => (
-            <Card key={client.id} className="hover:shadow-lg transition-shadow relative cursor-pointer" onClick={() => {
-              setSelectedClient(client);
-              setShowClientDetailsModal(true);
-            }}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2" style={{color: '#10B981'}}>
-                  <Users className="h-5 w-5 text-primary" />
-                  {client.name}
-                </CardTitle>
-                <CardDescription style={{color: '#10B981'}}>{client.project}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium" style={{color: '#10B981'}}>Progress</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm" style={{color: '#10B981'}}>{client.progress}%</span>
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        className="h-6 px-2" 
-                        style={{color: '#10B981'}}
-                        onClick={() => handleUpdateProgress(client)}
-                      >
-                        <TrendingUp className="h-3 w-3" />
-                      </Button>
+          {clients.map((client) => {
+            return (
+              <Card
+                key={client.id}
+                className="group hover:shadow-lg transition-all duration-300 relative cursor-pointer overflow-hidden border-border/50 bg-card/50 hover:bg-card"
+                onClick={() => {
+                  setSelectedClient(client);
+                  setShowClientDetailsModal(true);
+                }}
+              >
+                {/* Background Image Overlay */}
+                {client.imageUrl && (
+                  <div
+                    className="absolute inset-0 bg-cover bg-center opacity-[0.05] group-hover:opacity-[0.15] transition-opacity duration-500"
+                    style={{ backgroundImage: `url(${client.imageUrl})` }}
+                  />
+                )}
+
+                <CardHeader className="relative z-10 pb-4">
+                  <div className="flex justify-between items-start">
+                    <div className="space-y-1">
+                      <CardTitle className="flex items-center gap-2 text-xl">
+                        {client.name}
+                      </CardTitle>
+                      <CardDescription className="font-medium text-primary">
+                        {client.project}
+                      </CardDescription>
+                    </div>
+                    <div className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${client.status === 'In Progress'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800'
+                      : 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800'
+                      }`}>
+                      {client.status}
                     </div>
                   </div>
-                  <Progress value={client.progress} className="h-2" />
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm" style={{color: '#10B981'}}>Status</span>
-                  <span className="text-sm font-medium text-primary">{client.status}</span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="gap-2" 
-                    style={{borderColor: '#10B981', color: '#10B981'}}
-                    onClick={() => handleOpenMessaging(client)}
-                  >
-                    <MessageSquare className="h-4 w-4" />
-                    Message
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="gap-2" 
-                    style={{borderColor: '#10B981', color: '#10B981'}}
-                    onClick={() => navigate('/contractor/permits')}
-                  >
-                    <FileText className="h-4 w-4" />
-                    Permits
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    className="gap-2" 
-                    style={{backgroundColor: '#059669', color: 'white'}}
-                    onClick={() => handleViewTasks(client)}
-                  >
-                    <CheckSquare className="h-4 w-4" />
-                    Tasks
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    className="gap-2" 
-                    style={{backgroundColor: '#10B981', color: 'white'}}
-                    onClick={() => handleShareLink(client)}
-                  >
-                    <LinkIcon className="h-4 w-4" />
-                    Share
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardHeader>
+
+                <CardContent className="space-y-6 relative z-10">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground font-medium">Progress</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-foreground">{client.progress}%</span>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-6 w-6 text-muted-foreground hover:text-primary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleUpdateProgress(client);
+                          }}
+                        >
+                          <TrendingUp className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                    <Progress value={client.progress} className="h-2 bg-muted" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 pt-2">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="gap-2 w-full justify-start"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenMessaging(client);
+                      }}
+                    >
+                      <MessageSquare className="h-3.5 w-3.5" />
+                      Message
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="gap-2 w-full justify-start"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/contractor/permits');
+                      }}
+                    >
+                      <FileText className="h-3.5 w-3.5" />
+                      Permits
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="gap-2 w-full justify-start"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewTasks(client);
+                      }}
+                    >
+                      <CheckSquare className="h-3.5 w-3.5" />
+                      Tasks
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="gap-2 w-full justify-start"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleShareLink(client);
+                      }}
+                    >
+                      <LinkIcon className="h-3.5 w-3.5" />
+                      Share
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </main>
 
       {/* Add Client Modal */}
       {showAddClientModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowAddClientModal(false)}>
-          <Card className="w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setShowAddClientModal(false)}>
+          <Card className="w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold" style={{color: '#10B981'}}>Add New Client</h2>
+                <h2 className="text-2xl font-bold">Add New Client</h2>
                 <Button variant="ghost" size="icon" onClick={() => setShowAddClientModal(false)}>
                   <X className="h-5 w-5" />
                 </Button>
@@ -353,88 +366,86 @@ const ContractorDashboard = () => {
               <form onSubmit={handleAddClient} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Client Name *</label>
-                    <input 
-                      type="text" 
+                    <label className="text-sm font-medium">Client Name *</label>
+                    <input
+                      type="text"
                       name="name"
                       required
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       placeholder="John Doe"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Project Name *</label>
-                    <input 
-                      type="text" 
+                    <label className="text-sm font-medium">Project Name *</label>
+                    <input
+                      type="text"
                       name="project"
                       required
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       placeholder="Kitchen Remodel"
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Email</label>
-                    <input 
-                      type="email" 
+                    <label className="text-sm font-medium">Email</label>
+                    <input
+                      type="email"
                       name="email"
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       placeholder="client@email.com"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Phone</label>
-                    <input 
-                      type="tel" 
+                    <label className="text-sm font-medium">Phone</label>
+                    <input
+                      type="tel"
                       name="phone"
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       placeholder="(555) 123-4567"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium" style={{color: '#10B981'}}>Address</label>
-                  <input 
-                    type="text" 
+                  <label className="text-sm font-medium">Address</label>
+                  <input
+                    type="text"
                     name="address"
-                    className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     placeholder="123 Main St, City, State ZIP"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Start Date</label>
-                    <input 
-                      type="date" 
+                    <label className="text-sm font-medium">Start Date</label>
+                    <input
+                      type="date"
                       name="startDate"
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Budget</label>
-                    <input 
-                      type="number" 
+                    <label className="text-sm font-medium">Budget</label>
+                    <input
+                      type="number"
                       name="budget"
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       placeholder="50000"
                     />
                   </div>
                 </div>
                 <div className="flex gap-3 pt-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => setShowAddClientModal(false)}
-                    style={{borderColor: '#10B981', color: '#10B981'}}
                     className="flex-1"
                   >
                     Cancel
                   </Button>
-                  <Button 
-                    type="submit" 
-                    style={{backgroundColor: '#059669', color: 'white'}}
-                    className="flex-1"
+                  <Button
+                    type="submit"
+                    className="flex-1 shadow-md hover:shadow-lg"
                   >
                     Add Client
                   </Button>
@@ -447,51 +458,58 @@ const ContractorDashboard = () => {
 
       {/* Update Progress Modal */}
       {showProgressModal && selectedClient && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowProgressModal(false)}>
-          <Card className="w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setShowProgressModal(false)}>
+          <Card className="w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold" style={{color: '#10B981'}}>Update Progress</h2>
+                <h2 className="text-2xl font-bold">Update Progress</h2>
                 <Button variant="ghost" size="icon" onClick={() => setShowProgressModal(false)}>
                   <X className="h-5 w-5" />
                 </Button>
               </div>
               <div className="space-y-6">
                 <div>
-                  <p className="font-semibold mb-1" style={{color: '#10B981'}}>{selectedClient.name}</p>
-                  <p className="text-sm" style={{color: '#10B981'}}>{selectedClient.project}</p>
+                  <p className="font-semibold mb-1 text-lg">{selectedClient.name}</p>
+                  <p className="text-sm text-muted-foreground">{selectedClient.project}</p>
                 </div>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Progress</label>
-                    <span className="text-2xl font-bold" style={{color: '#10B981'}}>{newProgress}%</span>
+                    <label className="text-sm font-medium">Progress</label>
+                    <span className="text-2xl font-bold text-primary">{newProgress}%</span>
                   </div>
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="100" 
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
                     value={newProgress}
                     onChange={(e) => setNewProgress(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
+                    className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
                   />
                   <Progress value={newProgress} className="h-3" />
                 </div>
 
+                {/* Payment Tracker */}
+                <div className="border-t pt-6">
+                  <PaymentTracker
+                    totalBudget={selectedClient.budget || 45000}
+                    currentWeek={Math.floor((newProgress / 100) * 4)}
+                    clientName={selectedClient.name}
+                  />
+                </div>
+
                 <div className="flex gap-3 pt-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => setShowProgressModal(false)}
-                    style={{borderColor: '#10B981', color: '#10B981'}}
                     className="flex-1"
                   >
                     Cancel
                   </Button>
-                  <Button 
+                  <Button
                     onClick={saveProgress}
-                    style={{backgroundColor: '#059669', color: 'white'}}
-                    className="flex-1"
+                    className="flex-1 shadow-md hover:shadow-lg"
                   >
                     Save Progress
                   </Button>
@@ -502,255 +520,108 @@ const ContractorDashboard = () => {
         </div>
       )}
 
-      {/* Share Link Modal */}
-      {showShareLinkModal && selectedClient && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowShareLinkModal(false)}>
-          <Card className="w-full max-w-2xl mx-4" onClick={(e) => e.stopPropagation()}>
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold" style={{color: '#10B981'}}>Share Homeowner Dashboard</h2>
-                <Button variant="ghost" size="icon" onClick={() => setShowShareLinkModal(false)}>
-                  <X className="h-5 w-5" />
-                </Button>
-              </div>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-semibold mb-1" style={{color: '#10B981'}}>{selectedClient.name}</h3>
-                  <p className="text-sm" style={{color: '#10B981'}}>{selectedClient.project}</p>
-                </div>
-                
-                <div className="space-y-3">
-                  <p className="text-sm" style={{color: '#10B981'}}>
-                    Share this link with your client to give them access to their personalized homeowner dashboard. 
-                    They'll be able to view project progress, property value estimates, and communicate with you directly.
-                  </p>
-                  
-                  <div className="flex gap-3">
-                    <input 
-                      type="text" 
-                      readOnly
-                      value={generateClientLink(selectedClient.id)}
-                      className="flex-1 px-4 py-3 border border-border rounded-lg bg-muted" 
-                    />
-                    <Button
-                      onClick={() => copyToClipboard(generateClientLink(selectedClient.id))}
-                      style={{backgroundColor: copiedLink ? '#10B981' : '#059669', color: 'white'}}
-                      className="gap-2"
-                    >
-                      <Copy className="h-4 w-4" />
-                      {copiedLink ? 'Copied!' : 'Copy Link'}
-                    </Button>
-                  </div>
-
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="flex items-start gap-3">
-                      <LinkIcon className="h-5 w-5 text-blue-600 mt-0.5" />
-                      <div>
-                        <p className="font-medium text-sm text-blue-900">How it works</p>
-                        <ul className="text-sm text-blue-800 mt-2 space-y-1 list-disc list-inside">
-                          <li>Send this link to your client via email or text</li>
-                          <li>Client can access their dashboard without creating an account</li>
-                          <li>Dashboard shows real-time project updates and progress</li>
-                          <li>Client can message you directly through the dashboard</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <Button 
-                    variant="outline"
-                    onClick={() => setShowShareLinkModal(false)}
-                    style={{borderColor: '#10B981', color: '#10B981'}}
-                    className="flex-1"
-                  >
-                    Close
-                  </Button>
-                  <Button 
-                    onClick={() => {
-                      const mailtoLink = `mailto:${selectedClient.email}?subject=Your Project Dashboard&body=Hi ${selectedClient.name},%0D%0A%0D%0AI've set up a dashboard for you to track your ${selectedClient.project} project. You can access it here:%0D%0A%0D%0A${generateClientLink(selectedClient.id)}%0D%0A%0D%0ABest regards`;
-                      window.location.href = mailtoLink;
-                    }}
-                    style={{backgroundColor: '#059669', color: 'white'}}
-                    className="flex-1 gap-2"
-                    disabled={!selectedClient.email}
-                  >
-                    <Mail className="h-4 w-4" />
-                    Send via Email
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {/* Messaging Thread Modal */}
-      {showMessagingModal && selectedClient && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowMessagingModal(false)}>
-          <Card className="w-full max-w-3xl mx-4 h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
-            <div className="p-6 border-b">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold" style={{color: '#10B981'}}>Messages</h2>
-                  <p className="text-sm" style={{color: '#10B981'}}>{selectedClient.name} - {selectedClient.project}</p>
-                </div>
-                <Button variant="ghost" size="icon" onClick={() => setShowMessagingModal(false)}>
-                  <X className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-            
-            {/* Message Thread */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4" style={{minHeight: 0}}>
-              {(messages[selectedClient.id] || []).map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.sender === 'contractor' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[70%] rounded-lg p-4 ${
-                      message.sender === 'contractor'
-                        ? 'bg-primary text-white'
-                        : 'bg-muted'
-                    }`}
-                    style={message.sender === 'contractor' ? {backgroundColor: '#059669'} : {}}
-                  >
-                    <p className={`text-sm ${
-                      message.sender === 'contractor' ? 'text-white' : 'text-foreground'
-                    }`} style={message.sender === 'contractor' ? {color: 'white'} : {color: '#10B981'}}>
-                      {message.text}
-                    </p>
-                    <p className={`text-xs mt-2 ${
-                      message.sender === 'contractor' ? 'text-white/70' : 'text-muted-foreground'
-                    }`}>
-                      {new Date(message.timestamp).toLocaleString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true
-                      })}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            {/* Message Input */}
-            <form onSubmit={handleSendMessage} className="p-6 border-t">
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  value={messageInput}
-                  onChange={(e) => setMessageInput(e.target.value)}
-                  placeholder="Type your message..."
-                  className="flex-1 px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-                <Button
-                  type="submit"
-                  size="lg"
-                  style={{backgroundColor: '#059669', color: 'white'}}
-                  className="gap-2 px-6"
-                  disabled={!messageInput.trim()}
-                >
-                  <Send className="h-4 w-4" />
-                  Send
-                </Button>
-              </div>
-            </form>
-          </Card>
-        </div>
-      )}
-
       {/* Client Details Modal */}
       {showClientDetailsModal && selectedClient && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowClientDetailsModal(false)}>
-          <Card className="w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setShowClientDetailsModal(false)}>
+          <Card className="w-full max-w-6xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold" style={{color: '#10B981'}}>Client Details</h2>
+                <h2 className="text-2xl font-bold">Client Details</h2>
                 <Button variant="ghost" size="icon" onClick={() => setShowClientDetailsModal(false)}>
                   <X className="h-5 w-5" />
                 </Button>
               </div>
-              
+
               <div className="space-y-6">
                 {/* Client Header */}
                 <div className="pb-6 border-b">
                   <div className="flex items-start gap-4">
                     <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Users className="h-8 w-8 text-primary" style={{color: '#10B981'}} />
+                      <Users className="h-8 w-8 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-2xl font-semibold" style={{color: '#10B981'}}>{selectedClient.name}</h3>
-                      <p style={{color: '#10B981'}}>{selectedClient.project}</p>
+                      <h3 className="text-2xl font-semibold">{selectedClient.name}</h3>
+                      <p className="text-muted-foreground">{selectedClient.project}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Contact Information */}
                 <div>
-                  <h4 className="text-lg font-semibold mb-4" style={{color: '#10B981'}}>Contact Information</h4>
+                  <h4 className="text-lg font-semibold mb-4">Contact Information</h4>
                   <div className="space-y-3">
                     {selectedClient.email && (
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span style={{color: '#10B981'}}>Email</span>
-                        <span className="font-medium" style={{color: '#10B981'}}>{selectedClient.email}</span>
+                      <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                        <span className="text-muted-foreground">Email</span>
+                        <span className="font-medium">{selectedClient.email}</span>
                       </div>
                     )}
                     {selectedClient.phone && (
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span style={{color: '#10B981'}}>Phone</span>
-                        <span className="font-medium" style={{color: '#10B981'}}>{selectedClient.phone}</span>
+                      <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                        <span className="text-muted-foreground">Phone</span>
+                        <span className="font-medium">{selectedClient.phone}</span>
                       </div>
                     )}
                     {selectedClient.address && (
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span style={{color: '#10B981'}}>Address</span>
-                        <span className="font-medium" style={{color: '#10B981'}}>{selectedClient.address}</span>
+                      <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                        <span className="text-muted-foreground">Address</span>
+                        <span className="font-medium">{selectedClient.address}</span>
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* Project Information */}
-                <div>
-                  <h4 className="text-lg font-semibold mb-4" style={{color: '#10B981'}}>Project Information</h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <span style={{color: '#10B981'}}>Project Status</span>
-                      <span className="font-medium px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">{selectedClient.status}</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <span style={{color: '#10B981'}}>Progress</span>
-                      <span className="font-medium" style={{color: '#10B981'}}>{selectedClient.progress}%</span>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <Progress value={selectedClient.progress} className="h-2" />
-                    </div>
-                    {selectedClient.startDate && (
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span style={{color: '#10B981'}}>Start Date</span>
-                        <span className="font-medium" style={{color: '#10B981'}}>{new Date(selectedClient.startDate).toLocaleDateString()}</span>
-                      </div>
+                {/* Tab Navigation */}
+                <div className="border-t pt-6">
+                  <div className="flex gap-4 mb-6 border-b overflow-x-auto">
+                    {[
+                      { id: 'timeline', label: 'Timeline & Subs' },
+                      { id: 'payments', label: 'Payment Schedule' },
+                      { id: 'materials', label: 'Materials' },
+                      { id: 'team', label: 'Project Team' },
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setDetailsTab(tab.id as any)}
+                        className={`pb-3 px-2 font-semibold transition-colors whitespace-nowrap ${detailsTab === tab.id
+                          ? 'border-b-2 border-primary text-primary'
+                          : 'text-muted-foreground hover:text-foreground'
+                          }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Tab Content */}
+                  <div className="min-h-[300px]">
+                    {detailsTab === 'timeline' && (
+                      <ContractorTimeline currentWeek={3} totalWeeks={4} />
                     )}
-                    {selectedClient.budget && (
-                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <span style={{color: '#10B981'}}>Budget</span>
-                        <span className="font-medium" style={{color: '#10B981'}}>${selectedClient.budget.toLocaleString()}</span>
-                      </div>
+
+                    {detailsTab === 'payments' && (
+                      <PaymentTracker
+                        totalBudget={selectedClient.budget || 45000}
+                        currentWeek={3}
+                        clientName={selectedClient.name}
+                      />
+                    )}
+
+                    {detailsTab === 'materials' && (
+                      <MaterialsTracker />
+                    )}
+
+                    {detailsTab === 'team' && (
+                      <TeamManagement />
                     )}
                   </div>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="grid grid-cols-2 gap-3 pt-4">
-                  <Button 
-                    variant="outline" 
-                    className="gap-2" 
-                    style={{borderColor: '#10B981', color: '#10B981'}}
+                  <Button
+                    variant="secondary"
+                    className="gap-2"
                     onClick={() => {
                       setShowClientDetailsModal(false);
                       handleOpenMessaging(selectedClient);
@@ -759,10 +630,9 @@ const ContractorDashboard = () => {
                     <MessageSquare className="h-4 w-4" />
                     Message
                   </Button>
-                  <Button 
-                    size="sm" 
-                    className="gap-2" 
-                    style={{backgroundColor: '#059669', color: 'white'}}
+                  <Button
+                    className="gap-2"
+                    style={{ backgroundColor: '#F59E0B', color: 'white' }}
                     onClick={() => {
                       setShowClientDetailsModal(false);
                       handleUpdateProgress(selectedClient);
@@ -771,10 +641,9 @@ const ContractorDashboard = () => {
                     <TrendingUp className="h-4 w-4" />
                     Update Progress
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    className="gap-2" 
-                    style={{borderColor: '#10B981', color: '#10B981'}}
+                  <Button
+                    variant="outline"
+                    className="gap-2"
                     onClick={() => {
                       setShowClientDetailsModal(false);
                       handleViewTasks(selectedClient);
@@ -783,10 +652,9 @@ const ContractorDashboard = () => {
                     <CheckSquare className="h-4 w-4" />
                     View Tasks
                   </Button>
-                  <Button 
-                    size="sm" 
-                    className="gap-2" 
-                    style={{backgroundColor: '#10B981', color: 'white'}}
+
+                  <Button
+                    className="gap-2"
                     onClick={() => {
                       setShowClientDetailsModal(false);
                       handleShareLink(selectedClient);
@@ -802,107 +670,260 @@ const ContractorDashboard = () => {
         </div>
       )}
 
-      {/* Client Tasks Modal - In Progress Tasks */}
-      {showTasksModal && selectedClient && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowTasksModal(false)}>
-          <Card className="w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+      {/* Share Link Modal */}
+      {showShareLinkModal && selectedClient && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setShowShareLinkModal(false)}>
+          <Card className="w-full max-w-2xl mx-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold" style={{color: '#10B981'}}>Client Tasks - In Progress</h2>
-                <Button variant="ghost" size="icon" onClick={() => setShowTasksModal(false)}>
+                <h2 className="text-2xl font-bold">Share Homeowner Dashboard</h2>
+                <Button variant="ghost" size="icon" onClick={() => setShowShareLinkModal(false)}>
                   <X className="h-5 w-5" />
                 </Button>
               </div>
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-xl font-semibold mb-1" style={{color: '#10B981'}}>{selectedClient.name}</h3>
-                  <p className="text-sm" style={{color: '#10B981'}}>{selectedClient.project}</p>
+                  <h3 className="text-xl font-semibold mb-1">{selectedClient.name}</h3>
+                  <p className="text-sm text-muted-foreground">{selectedClient.project}</p>
                 </div>
-                
-                {/* In Progress Tasks */}
+
                 <div className="space-y-3">
-                  <div className="p-4 border border-border rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-start gap-3">
-                        <input type="checkbox" className="mt-1" />
-                        <div>
-                          <h4 className="font-semibold" style={{color: '#10B981'}}>Review architectural plans</h4>
-                          <p className="text-sm" style={{color: '#10B981'}}>Due: Today</p>
-                        </div>
-                      </div>
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                        High Priority
-                      </span>
-                    </div>
+                  <p className="text-sm text-muted-foreground">
+                    Share this link with your client to give them access to their personalized homeowner dashboard.
+                    They'll be able to view project progress, property value estimates, and communicate with you directly.
+                  </p>
+
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      readOnly
+                      value={generateClientLink(selectedClient.id)}
+                      className="flex-1 h-10 rounded-md border border-input bg-muted px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                    <Button
+                      onClick={() => copyToClipboard(generateClientLink(selectedClient.id))}
+                      className="gap-2"
+                    >
+                      <Copy className="h-4 w-4" />
+                      {copiedLink ? 'Copied!' : 'Copy Link'}
+                    </Button>
                   </div>
 
-                  <div className="p-4 border border-border rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-start gap-3">
-                        <input type="checkbox" className="mt-1" />
-                        <div>
-                          <h4 className="font-semibold" style={{color: '#10B981'}}>Coordinate with electrician</h4>
-                          <p className="text-sm" style={{color: '#10B981'}}>Due: Tomorrow</p>
-                        </div>
+                  <div className="p-4 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <LinkIcon className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-sm text-blue-900 dark:text-blue-100">How it works</p>
+                        <ul className="text-sm text-blue-800 dark:text-blue-200 mt-2 space-y-1 list-disc list-inside">
+                          <li>Send this link to your client via email or text</li>
+                          <li>Client can access their dashboard without creating an account</li>
+                          <li>Dashboard shows real-time project updates and progress</li>
+                          <li>Client can message you directly through the dashboard</li>
+                        </ul>
                       </div>
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                        Medium Priority
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-4 border border-border rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-start gap-3">
-                        <input type="checkbox" className="mt-1" />
-                        <div>
-                          <h4 className="font-semibold" style={{color: '#10B981'}}>Prepare cost estimate for client review</h4>
-                          <p className="text-sm" style={{color: '#10B981'}}>Due: This week</p>
-                        </div>
-                      </div>
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                        Medium Priority
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="p-4 border border-border rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-start gap-3">
-                        <input type="checkbox" className="mt-1" />
-                        <div>
-                          <h4 className="font-semibold" style={{color: '#10B981'}}>Schedule subcontractor meetings</h4>
-                          <p className="text-sm" style={{color: '#10B981'}}>Due: Next week</p>
-                        </div>
-                      </div>
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        Low Priority
-                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex gap-3 pt-4">
-                  <Button 
+                  <Button
                     variant="outline"
-                    onClick={() => setShowTasksModal(false)}
-                    style={{borderColor: '#10B981', color: '#10B981'}}
+                    onClick={() => setShowShareLinkModal(false)}
                     className="flex-1"
                   >
                     Close
                   </Button>
-                  <Button 
+                  <Button
                     onClick={() => {
-                      setShowTasksModal(false);
-                      navigate('/contractor/tasks');
+                      const mailtoLink = `mailto:${selectedClient.email}?subject=Your Project Dashboard&body=Hi ${selectedClient.name},%0D%0A%0D%0AI've set up a dashboard for you to track your ${selectedClient.project} project. You can access it here:%0D%0A%0D%0A${generateClientLink(selectedClient.id)}%0D%0A%0D%0ABest regards`;
+                      window.location.href = mailtoLink;
                     }}
-                    style={{backgroundColor: '#059669', color: 'white'}}
-                    className="flex-1"
+                    className="flex-1 gap-2 shadow-md hover:shadow-lg"
+                    disabled={!selectedClient.email}
                   >
-                    Manage All Tasks
+                    <Mail className="h-4 w-4" />
+                    Send via Email
                   </Button>
                 </div>
               </div>
+            </div>
+          </Card>
+        </div>
+      )}
+      {/* Tasks Modal - Mini Calendar View */}
+      {showTasksModal && selectedClient && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setShowTasksModal(false)}>
+          <Card className="w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold">Project Schedule - {selectedClient.name}</h2>
+                <Button variant="ghost" size="icon" onClick={() => setShowTasksModal(false)}>
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* Mini Calendar */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-bold">November 2024</h3>
+                </div>
+
+                {/* Day headers */}
+                <div className="grid grid-cols-7 gap-0 mb-2">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                    <div key={day} className="text-center font-semibold p-2 text-sm">
+                      {day}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Calendar grid */}
+                <div className="grid grid-cols-7 gap-0 border border-border">
+                  {/* Empty cells for days before month starts (Nov 2024 starts on Friday) */}
+                  {[...Array(5)].map((_, i) => (
+                    <div key={`empty-${i}`} className="p-2 border border-border bg-muted/20 min-h-24" />
+                  ))}
+
+                  {/* Day 1 */}
+                  <div className="p-2 border border-border min-h-24">
+                    <div className="text-sm font-semibold mb-1">1</div>
+                    <div className="text-xs px-2 py-1 rounded bg-green-100 text-black truncate">
+                      Initial Consultation
+                    </div>
+                  </div>
+
+                  {/* Day 2 */}
+                  <div className="p-2 border border-border min-h-24">
+                    <div className="text-sm font-semibold mb-1">2</div>
+                  </div>
+
+                  {/* Days 3-14 */}
+                  {[...Array(12)].map((_, i) => (
+                    <div key={`day-${i + 3}`} className="p-2 border border-border min-h-24">
+                      <div className="text-sm font-semibold mb-1">{i + 3}</div>
+                    </div>
+                  ))}
+
+                  {/* Day 15 - Sign Contract */}
+                  <div className="p-2 border border-border min-h-24">
+                    <div className="text-sm font-semibold mb-1">15</div>
+                    <div className="text-xs px-2 py-1 rounded bg-green-100 text-black truncate">
+                      Sign Contract
+                    </div>
+                  </div>
+
+                  {/* Days 16-19 */}
+                  {[...Array(4)].map((_, i) => (
+                    <div key={`day-${i + 16}`} className="p-2 border border-border min-h-24">
+                      <div className="text-sm font-semibold mb-1">{i + 16}</div>
+                    </div>
+                  ))}
+
+                  {/* Day 20 - Material Selection */}
+                  <div className="p-2 border border-border min-h-24 bg-yellow-50">
+                    <div className="text-sm font-semibold mb-1">20</div>
+                    <div className="text-xs px-2 py-1 rounded bg-yellow-100 text-black truncate">
+                      Material Selection
+                    </div>
+                  </div>
+
+                  {/* Days 21-24 */}
+                  {[...Array(4)].map((_, i) => (
+                    <div key={`day-${i + 21}`} className="p-2 border border-border min-h-24">
+                      <div className="text-sm font-semibold mb-1">{i + 21}</div>
+                    </div>
+                  ))}
+
+                  {/* Day 25 - Begin Demolition */}
+                  <div className="p-2 border border-border min-h-24">
+                    <div className="text-sm font-semibold mb-1">25</div>
+                    <div className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600 truncate">
+                      Begin Demolition
+                    </div>
+                  </div>
+
+                  {/* Days 26-30 */}
+                  {[...Array(5)].map((_, i) => (
+                    <div key={`day-${i + 26}`} className="p-2 border border-border min-h-24">
+                      <div className="text-sm font-semibold mb-1">{i + 26}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Legend */}
+                <div className="flex flex-wrap gap-4 mt-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded bg-green-100" />
+                    <span className="text-sm">Completed</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded bg-yellow-100" />
+                    <span className="text-sm">In Progress</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded bg-gray-100" />
+                    <span className="text-sm">Pending</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Messaging Modal */}
+      {showMessagingModal && selectedClient && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setShowMessagingModal(false)}>
+          <Card className="w-full max-w-2xl mx-4 h-[600px] flex flex-col shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="p-4 border-b flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Users className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">{selectedClient.name}</h3>
+                  <p className="text-xs text-muted-foreground">{selectedClient.project}</p>
+                </div>
+              </div>
+              <Button variant="ghost" size="icon" onClick={() => setShowMessagingModal(false)}>
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {messages[selectedClient.id]?.map((msg) => (
+                <div key={msg.id} className={`flex ${msg.sender === 'contractor' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[80%] rounded-lg p-3 ${msg.sender === 'contractor'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted'
+                    }`}>
+                    <p className="text-sm">{msg.text}</p>
+                    <span className="text-[10px] opacity-70 mt-1 block">
+                      {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {!messages[selectedClient.id] && (
+                <div className="text-center text-muted-foreground py-8">
+                  No messages yet. Start the conversation!
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 border-t">
+              <form onSubmit={handleSendMessage} className="flex gap-2">
+                <input
+                  type="text"
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  placeholder="Type a message..."
+                  className="flex-1 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
+                <Button type="submit" size="icon">
+                  <Send className="h-4 w-4" />
+                </Button>
+              </form>
             </div>
           </Card>
         </div>

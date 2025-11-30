@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle2, Users, Calendar, FileText, MessageSquare, TrendingUp, CheckSquare, Camera, Clock } from "lucide-react";
+import { CheckCircle2, Users, Calendar, FileText, MessageSquare, TrendingUp, CheckSquare, Camera, Clock, ArrowRight } from "lucide-react";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useLanguage } from "@/context/LanguageContext";
 import { Chatbot } from "@/components/Chatbot";
@@ -114,20 +114,19 @@ const GeneralLanding = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
       {/* Header */}
-      <header className="border-b border-border/40 bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3 hover:scale-105 transition-transform cursor-pointer">
-            <img src="/logo.svg" alt="Assemble" className="h-12 w-auto drop-shadow-md" />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text text-transparent">Assemble</h1>
+      <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3 hover:opacity-90 transition-opacity cursor-pointer" onClick={() => navigate("/")}>
+            <img src="/logo.png" alt="Assemble" className="h-10 w-auto" />
+            <h1 className="text-2xl font-bold tracking-tight text-primary">Assemble</h1>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <LanguageSelector />
-            <Button 
+            <Button
               onClick={() => navigate("/select-role")}
-              className="shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 transition-all"
-              style={{backgroundColor: '#059669', color: 'white'}}
+              className="font-semibold shadow-md hover:shadow-lg transition-all"
             >
               {t("getStarted")}
             </Button>
@@ -136,62 +135,54 @@ const GeneralLanding = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-6 bg-gradient-to-br from-emerald-50/30 via-white to-green-50/20 relative overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-green-200/20 rounded-full blur-3xl"></div>
-        
-        <div className="container mx-auto max-w-6xl relative">
+      <section className="relative overflow-hidden pt-20 pb-32 lg:pt-32 lg:pb-40">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-background to-background"></div>
+        <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-center lg:text-left animate-fade-in">
-              <div className="inline-block mb-4 px-4 py-2 bg-emerald-100 rounded-full">
-                <span className="text-sm font-semibold" style={{color: '#059669'}}>🚀 Transform Your Projects</span>
+            <div className="space-y-8 text-center lg:text-left animate-fade-in-up">
+              <div className="inline-flex items-center rounded-full border px-4 py-1.5 text-sm font-medium text-primary bg-primary/10">
+                <span className="flex h-2 w-2 rounded-full bg-primary mr-2"></span>
+                Transform Your Projects
               </div>
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-600 bg-clip-text text-transparent leading-tight">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.1]">
                 {t("heroTitle")}
               </h1>
-              <p className="text-xl mb-8 text-gray-600 leading-relaxed">
+              <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto lg:mx-0">
                 {t("heroSubtitle")}
               </p>
-              <div className="flex gap-4 justify-center lg:justify-start">
-                <Button 
-                  size="lg" 
-                  onClick={() => navigate("/select-role")} 
-                  className="shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/50 hover:scale-105 transition-all duration-300"
-                  style={{backgroundColor: '#059669', color: 'white'}}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Button
+                  size="lg"
+                  onClick={() => navigate("/select-role")}
+                  className="text-lg px-8 h-14 shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-300"
                 >
                   {t("getStartedFree")}
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="hover:bg-emerald-50 transition-all duration-300 hover:scale-105"
-                  style={{borderColor: '#10B981', color: '#10B981', borderWidth: '2px'}}
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="text-lg px-8 h-14 border-2 hover:bg-secondary/50 transition-all duration-300"
                 >
                   {t("watchDemo")}
                 </Button>
               </div>
             </div>
-            <div className="relative animate-slide-in">
-              <div className="rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-shadow duration-300 transform hover:scale-[1.02] transition-transform">
-                <img 
-                  src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80" 
+            <div className="relative lg:ml-auto animate-fade-in-up delay-200">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-border/50 bg-background/50 backdrop-blur-xl">
+                <img
+                  src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80"
                   alt="Modern home renovation"
-                  className="w-full h-auto object-cover"
+                  className="w-full h-auto object-cover aspect-[4/3]"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent"></div>
               </div>
-              <div className="absolute -bottom-6 -left-6 rounded-xl overflow-hidden shadow-2xl w-48 hidden lg:block border-4 border-white hover:scale-110 transition-transform duration-300">
-                <img 
-                  src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=400&q=80" 
+              <div className="absolute -bottom-12 -left-12 w-64 rounded-xl overflow-hidden shadow-2xl ring-4 ring-background hidden lg:block animate-float">
+                <img
+                  src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=400&q=80"
                   alt="Construction team"
                   className="w-full h-auto object-cover"
                 />
-              </div>
-              {/* Decorative dot pattern */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 opacity-20">
-                <div className="grid grid-cols-4 gap-2">
-                  {[...Array(16)].map((_, i) => <div key={i} className="w-2 h-2 rounded-full" style={{backgroundColor: '#10B981'}}></div>)}
-                </div>
               </div>
             </div>
           </div>
@@ -199,134 +190,140 @@ const GeneralLanding = () => {
       </section>
 
       {/* Contractor Features Section */}
-      <section className="py-20 px-6 bg-muted/30">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-            <div className="rounded-2xl overflow-hidden shadow-xl">
-              <img 
-                src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80" 
+      <section className="py-24 bg-secondary/30">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-border/50 order-2 lg:order-1">
+              <img
+                src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80"
                 alt="Contractor working"
-                className="w-full h-96 object-cover"
+                className="w-full h-[500px] object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent mix-blend-overlay"></div>
             </div>
-            <div>
-              <h2 className="text-4xl font-bold mb-4" style={{color: '#10B981'}}>
+            <div className="order-1 lg:order-2">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">
                 {t("forContractors")}
               </h2>
-              <p className="text-lg mb-6" style={{color: '#10B981'}}>
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                 {t("contractorSubtitle")}
               </p>
+              <div className="grid sm:grid-cols-2 gap-6">
+                {contractorFeatures.map((feature, index) => (
+                  <Card
+                    key={index}
+                    className="border-none shadow-sm hover:shadow-md transition-all duration-300 bg-background/50 backdrop-blur-sm"
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3 text-primary">
+                        <feature.icon className="h-5 w-5" />
+                      </div>
+                      <CardTitle className="text-base font-semibold">{t(feature.titleKey)}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">{t(feature.descKey)}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {contractorFeatures.map((feature, index) => (
-              <Card 
-                key={index} 
-                className="border-2 border-transparent hover:border-emerald-400 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white/80 backdrop-blur-sm group"
-              >
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-100 to-green-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <feature.icon className="h-6 w-6 text-emerald-600" />
-                  </div>
-                  <CardTitle className="text-lg font-bold" style={{color: '#10B981'}}>{t(feature.titleKey)}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 leading-relaxed">{t(feature.descKey)}</p>
-                </CardContent>
-              </Card>
-            ))}
           </div>
         </div>
       </section>
 
       {/* Homeowner Features Section */}
-      <section className="py-20 px-6">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-            <div className="order-2 lg:order-1">
-              <h2 className="text-4xl font-bold mb-4" style={{color: '#10B981'}}>
+      <section className="py-24">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">
                 {t("forHomeowners")}
               </h2>
-              <p className="text-lg mb-6" style={{color: '#10B981'}}>
+              <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                 {t("homeownerSubtitle")}
               </p>
+              <div className="grid sm:grid-cols-2 gap-6">
+                {homeownerFeatures.map((feature, index) => (
+                  <Card
+                    key={index}
+                    className="border-none shadow-sm hover:shadow-md transition-all duration-300 bg-secondary/20"
+                  >
+                    <CardHeader className="pb-2">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3 text-primary">
+                        <feature.icon className="h-5 w-5" />
+                      </div>
+                      <CardTitle className="text-base font-semibold">{t(feature.titleKey)}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">{t(feature.descKey)}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
-            <div className="rounded-2xl overflow-hidden shadow-xl order-1 lg:order-2">
-              <img 
-                src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80" 
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl ring-1 ring-border/50">
+              <img
+                src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80"
                 alt="Modern kitchen renovation"
-                className="w-full h-96 object-cover"
+                className="w-full h-[500px] object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-bl from-primary/20 to-transparent mix-blend-overlay"></div>
             </div>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {homeownerFeatures.map((feature, index) => (
-              <Card 
-                key={index} 
-                className="border-2 border-transparent hover:border-emerald-400 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 bg-white/80 backdrop-blur-sm group"
-              >
-                <CardHeader>
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-100 to-green-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                    <feature.icon className="h-6 w-6 text-emerald-600" />
-                  </div>
-                  <CardTitle className="text-lg font-bold" style={{color: '#10B981'}}>{t(feature.titleKey)}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 leading-relaxed">{t(feature.descKey)}</p>
-                </CardContent>
-              </Card>
-            ))}
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 px-6 bg-muted/30">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-4xl font-bold text-center mb-4" style={{color: '#10B981'}}>
-            {t("pricing")}
-          </h2>
-          <p className="text-center mb-12 max-w-2xl mx-auto" style={{color: '#10B981'}}>
-            {t("pricingSubtitle")}
-          </p>
-          
+      <section className="py-24 bg-secondary/30">
+        <div className="container mx-auto px-6">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
+              {t("pricing")}
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              {t("pricingSubtitle")}
+            </p>
+          </div>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {pricingPlans.map((plan, index) => (
-              <Card 
-                key={index} 
-                className={`relative hover:-translate-y-2 transition-all duration-300 ${plan.popular ? 'border-emerald-500 border-2 shadow-2xl shadow-emerald-500/20 scale-105' : 'border-2 hover:border-emerald-300 hover:shadow-xl'}`}
+              <Card
+                key={index}
+                className={`relative flex flex-col transition-all duration-300 ${plan.popular
+                    ? 'border-primary shadow-xl scale-105 z-10'
+                    : 'hover:border-primary/50 hover:shadow-lg'
+                  }`}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-emerald-600 to-green-500 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg">
-                      ✨ {t("mostPopular")}
+                    <span className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium shadow-lg">
+                      Most Popular
                     </span>
                   </div>
                 )}
                 <CardHeader>
-                  <CardTitle className="text-xl" style={{color: '#10B981'}}>{plan.name}</CardTitle>
-                  <CardDescription style={{color: '#10B981'}}>{plan.description}</CardDescription>
-                  <div className="mt-4">
-                    <span className="text-3xl font-bold" style={{color: '#10B981'}}>{plan.price}</span>
-                    <span style={{color: '#10B981'}}>{t("perMonth")}</span>
+                  <CardTitle className="text-xl font-bold">{plan.name}</CardTitle>
+                  <CardDescription>{plan.description}</CardDescription>
+                  <div className="mt-4 flex items-baseline gap-1">
+                    <span className="text-4xl font-bold text-foreground">{plan.price}</span>
+                    <span className="text-muted-foreground">{t("perMonth")}</span>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
+                <CardContent className="flex-1">
+                  <ul className="space-y-3">
                     {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                        <span className="text-xs" style={{color: '#10B981'}}>{feature}</span>
+                      <li key={idx} className="flex items-start gap-3 text-sm text-muted-foreground">
+                        <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+                        <span>{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button 
-                    className="w-full" 
+                  <Button
+                    className="w-full"
                     variant={plan.popular ? "default" : "outline"}
+                    size="lg"
                     onClick={() => navigate("/select-role")}
                   >
                     {t("startFreeTrial")}
@@ -339,26 +336,29 @@ const GeneralLanding = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 bg-gradient-to-br from-emerald-600 to-green-500 relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-10">
-          <div className="absolute top-10 left-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-primary -z-20"></div>
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 -z-10"></div>
+        <div className="absolute top-0 left-0 w-full h-full opacity-30">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-[100px]"></div>
+          <div className="absolute bottom-10 right-10 w-72 h-72 bg-white rounded-full blur-[100px]"></div>
         </div>
-        
-        <div className="container mx-auto max-w-4xl text-center relative">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+
+        <div className="container mx-auto px-6 text-center relative z-10">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-primary-foreground">
             {t("readyToStart")}
           </h2>
-          <p className="text-xl mb-8 text-white/90">
+          <p className="text-xl mb-10 text-primary-foreground/90 max-w-2xl mx-auto">
             {t("readySubtitle")}
           </p>
-          <Button 
-            size="lg" 
+          <Button
+            size="lg"
             onClick={() => navigate("/select-role")}
-            className="bg-white hover:bg-gray-50 text-emerald-600 shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 text-lg px-8 py-6 h-auto"
+            variant="secondary"
+            className="text-lg px-10 h-16 shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300 font-bold"
           >
-            {t("getStartedToday")} →
+            {t("getStartedToday")}
+            <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
       </section>

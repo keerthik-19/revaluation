@@ -32,11 +32,11 @@ const HomeownerPage: React.FC = () => {
         console.log('Parsing address...');
         const searchRequest = attomApiService.parseAddress(searchAddress);
         console.log('Parsed address:', searchRequest);
-        
+
         console.log('Calling getPropertyValuation...');
         const valuation = await attomApiService.getPropertyValuation(searchRequest);
         console.log('Got valuation:', valuation);
-        
+
         setPropertyData(valuation);
         setShowValuation(true);
       } catch (error) {
@@ -62,18 +62,18 @@ const HomeownerPage: React.FC = () => {
       <nav className="top-nav">
         <div className="nav-container">
           <div className="logo">
-            <h2>Assemble</h2>
+            <img src="/logo.png" alt="Assemble" style={{ height: '60px', width: 'auto' }} />
           </div>
           <div className="nav-links">
-            <button 
-              className="nav-link" 
+            <button
+              className="nav-link"
               onClick={() => handleUserTypeLogin('contractor')}
             >
               Contractor
             </button>
             <span className="nav-separator">|</span>
-            <button 
-              className="nav-link" 
+            <button
+              className="nav-link"
               onClick={() => handleUserTypeLogin('supplier')}
             >
               Supplier
@@ -113,7 +113,7 @@ const HomeownerPage: React.FC = () => {
               <p className="property-search-disclaimer">
                 Free instant estimate • No signup required • Trusted by thousands
               </p>
-              <button type="button" onClick={() => console.log('TEST BUTTON CLICKED')} style={{background: 'red', color: 'white', padding: '10px'}}>
+              <button type="button" onClick={() => console.log('TEST BUTTON CLICKED')} style={{ background: 'red', color: 'white', padding: '10px' }}>
                 TEST BUTTON - CHECK CONSOLE
               </button>
             </form>
@@ -129,7 +129,7 @@ const HomeownerPage: React.FC = () => {
                   ${propertyData ? propertyData.estimatedValue.toLocaleString() : '475,000'}
                 </div>
                 <div className="market-value-range">
-                  ${propertyData ? propertyData.valueRange.low.toLocaleString() : '450,000'} – 
+                  ${propertyData ? propertyData.valueRange.low.toLocaleString() : '450,000'} –
                   ${propertyData ? propertyData.valueRange.high.toLocaleString() : '500,000'}
                 </div>
                 <p className="market-value-disclaimer">

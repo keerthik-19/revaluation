@@ -72,7 +72,7 @@ const Revenue = () => {
               >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
-              <h1 className="text-2xl font-bold" style={{color: '#10B981'}}>Revenue Analytics</h1>
+              <h1 className="text-2xl font-bold" style={{ color: '#10B981' }}>Revenue Analytics</h1>
             </div>
             <LanguageSelector />
           </div>
@@ -81,100 +81,104 @@ const Revenue = () => {
 
       <main className="container mx-auto px-6 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2" style={{color: '#10B981'}}>Revenue Overview</h2>
-          <p style={{color: '#10B981'}}>
+          <h2 className="text-3xl font-bold mb-2" style={{ color: '#10B981' }}>Revenue Overview</h2>
+          <p className="text-gray-600">
             Track your earnings and manage your client management tool subscription
           </p>
         </div>
 
         {/* Revenue Stats */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-          <Card className="p-6 bg-card border-border">
+          <Card className="p-6 bg-card border-l-4 border-emerald-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm mb-1" style={{color: '#10B981'}}>Total Revenue</p>
-                <p className="text-3xl font-bold" style={{color: '#10B981'}}>
+                <p className="text-sm mb-1 text-emerald-600">Total Revenue</p>
+                <p className="text-3xl font-bold text-emerald-700">
                   ${currentRevenue.toLocaleString()}
                 </p>
-                <p className="text-sm text-primary mt-2 flex items-center gap-1">
+                <p className="text-sm text-emerald-600 mt-2 flex items-center gap-1">
                   <TrendingUp className="h-4 w-4" />
                   {growthPercent} from last month
                 </p>
               </div>
-              <div className="p-3 rounded-full bg-primary/10">
-                <DollarSign className="h-8 w-8 text-primary" />
+              <div className="p-3 rounded-full bg-emerald-100">
+                <DollarSign className="h-8 w-8 text-emerald-600" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 bg-card border-border">
+          <Card className="p-6 bg-card border-l-4 border-purple-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm mb-1" style={{color: '#10B981'}}>Active Clients</p>
-                <p className="text-3xl font-bold" style={{color: '#10B981'}}>8</p>
-                <p className="text-sm mt-2" style={{color: '#10B981'}}>
+                <p className="text-sm mb-1 text-purple-600">Active Clients</p>
+                <p className="text-3xl font-bold text-purple-700">8</p>
+                <p className="text-sm mt-2 text-purple-600">
                   2 new this month
                 </p>
               </div>
-              <div className="p-3 rounded-full bg-primary/10">
-                <Users className="h-8 w-8 text-primary" />
+              <div className="p-3 rounded-full bg-purple-100">
+                <Users className="h-8 w-8 text-purple-600" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 bg-card border-border">
+          <Card className="p-6 bg-card border-l-4 border-blue-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm mb-1" style={{color: '#10B981'}}>Active Projects</p>
-                <p className="text-3xl font-bold" style={{color: '#10B981'}}>12</p>
-                <p className="text-sm mt-2" style={{color: '#10B981'}}>
+                <p className="text-sm mb-1 text-blue-600">Active Projects</p>
+                <p className="text-3xl font-bold text-blue-700">12</p>
+                <p className="text-sm mt-2 text-blue-600">
                   5 in progress
                 </p>
               </div>
-              <div className="p-3 rounded-full bg-primary/10">
-                <FileText className="h-8 w-8 text-primary" />
+              <div className="p-3 rounded-full bg-blue-100">
+                <FileText className="h-8 w-8 text-blue-600" />
               </div>
             </div>
           </Card>
 
-          <Card className="p-6 bg-card border-border">
+          <Card className="p-6 bg-card border-l-4 border-orange-500">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm mb-1" style={{color: '#10B981'}}>Avg Project Value</p>
-                <p className="text-3xl font-bold" style={{color: '#10B981'}}>$5,288</p>
-                <p className="text-sm mt-2" style={{color: '#10B981'}}>
+                <p className="text-sm mb-1 text-orange-600">Avg Project Value</p>
+                <p className="text-3xl font-bold text-orange-700">$5,288</p>
+                <p className="text-sm mt-2 text-orange-600">
                   Per client
                 </p>
               </div>
-              <div className="p-3 rounded-full bg-primary/10">
-                <TrendingUp className="h-8 w-8 text-primary" />
+              <div className="p-3 rounded-full bg-orange-100">
+                <TrendingUp className="h-8 w-8 text-orange-600" />
               </div>
             </div>
           </Card>
         </div>
 
         {/* Revenue Chart */}
-        <Card className="p-6 bg-card border-border mb-8">
-          <h3 className="text-xl font-semibold mb-6" style={{color: '#10B981'}}>Monthly Revenue Trend</h3>
+        <Card className="p-6 bg-card border-t-4 border-emerald-500 mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 rounded-lg bg-emerald-100">
+              <TrendingUp className="h-6 w-6 text-emerald-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-emerald-700">Monthly Revenue Trend</h3>
+          </div>
           <div className="space-y-4">
             {revenueData.map((data) => {
               const maxRevenue = Math.max(...revenueData.map(d => d.revenue));
               const barWidth = (data.revenue / maxRevenue) * 100;
-              
+
               return (
                 <div key={data.month} className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span style={{color: '#10B981'}} className="font-medium">{data.month}</span>
-                    <span style={{color: '#10B981'}} className="font-semibold">
+                    <span className="font-medium text-gray-700">{data.month}</span>
+                    <span className="font-semibold text-emerald-700">
                       ${data.revenue.toLocaleString()}
                     </span>
                   </div>
-                  <div className="h-8 bg-muted rounded-lg overflow-hidden">
+                  <div className="h-8 bg-muted rounded-full overflow-hidden border border-emerald-100">
                     <div
-                      className="h-full rounded-lg transition-all duration-500"
-                      style={{ 
+                      className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-emerald-400 to-emerald-600"
+                      style={{
                         width: `${barWidth}%`,
-                        backgroundColor: '#10B981',
                         boxShadow: '0 2px 4px rgba(16, 185, 129, 0.2)'
                       }}
                     />
@@ -189,12 +193,12 @@ const Revenue = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-2xl font-bold" style={{color: '#10B981'}}>Payment Tracking</h3>
-              <p className="text-sm" style={{color: '#10B981'}}>Track payments from clients</p>
+              <h3 className="text-2xl font-bold" style={{ color: '#10B981' }}>Payment Tracking</h3>
+              <p className="text-sm text-gray-600">Track payments from clients</p>
             </div>
-            <Button 
-              className="gap-2" 
-              style={{backgroundColor: '#059669', color: 'white'}}
+            <Button
+              className="gap-2"
+              style={{ backgroundColor: '#10B981', color: 'white' }}
               onClick={() => setShowAddPaymentModal(true)}
             >
               <Plus className="h-4 w-4" />
@@ -204,11 +208,11 @@ const Revenue = () => {
 
           {/* Payment Summary Cards */}
           <div className="grid gap-4 md:grid-cols-2 mb-6">
-            <Card className="p-6 bg-card border-border">
+            <Card className="p-6 bg-card border-l-4 border-green-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm mb-1" style={{color: '#10B981'}}>Total Paid</p>
-                  <p className="text-3xl font-bold" style={{color: '#10B981'}}>
+                  <p className="text-sm mb-1 text-green-600">Total Paid</p>
+                  <p className="text-3xl font-bold text-green-700">
                     ${totalPaid.toLocaleString()}
                   </p>
                 </div>
@@ -218,11 +222,11 @@ const Revenue = () => {
               </div>
             </Card>
 
-            <Card className="p-6 bg-card border-border">
+            <Card className="p-6 bg-card border-l-4 border-yellow-500">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm mb-1" style={{color: '#10B981'}}>Total Pending</p>
-                  <p className="text-3xl font-bold" style={{color: '#10B981'}}>
+                  <p className="text-sm mb-1 text-yellow-600">Total Pending</p>
+                  <p className="text-3xl font-bold text-yellow-700">
                     ${totalPending.toLocaleString()}
                   </p>
                 </div>
@@ -234,14 +238,14 @@ const Revenue = () => {
           </div>
 
           {/* Payments List */}
-          <Card className="bg-card border-border">
+          <Card className="bg-card border-t-4 border-emerald-500">
             <div className="p-6">
               <div className="space-y-4">
                 {payments.map((payment) => (
-                  <div key={payment.id} className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div key={payment.id} className="flex items-center justify-between p-4 border-l-4 border border-border rounded-lg hover:bg-muted/50 transition-colors" style={{ borderLeftColor: payment.status === 'paid' ? '#10B981' : payment.status === 'pending' ? '#3B82F6' : '#EF4444' }}>
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h4 className="font-semibold text-lg" style={{color: '#10B981'}}>{payment.clientName}</h4>
+                        <h4 className="font-semibold text-lg text-gray-800">{payment.clientName}</h4>
                         {payment.status === 'paid' && (
                           <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex items-center gap-1">
                             <CheckCircle className="h-3 w-3" />
@@ -255,21 +259,21 @@ const Revenue = () => {
                           </span>
                         )}
                         {payment.status === 'overdue' && (
-                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 flex items-center gap-1">
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-black flex items-center gap-1">
                             <XCircle className="h-3 w-3" />
                             Overdue
                           </span>
                         )}
                       </div>
-                      <p className="text-sm" style={{color: '#10B981'}}>{payment.project}</p>
-                      <div className="flex gap-4 mt-2 text-sm" style={{color: '#10B981'}}>
+                      <p className="text-sm text-gray-600">{payment.project}</p>
+                      <div className="flex gap-4 mt-2 text-sm text-gray-600">
                         <span>Due: {new Date(payment.dueDate).toLocaleDateString()}</span>
                         {payment.paidDate && <span>Paid: {new Date(payment.paidDate).toLocaleDateString()}</span>}
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right">
-                        <p className="text-2xl font-bold" style={{color: '#10B981'}}>
+                        <p className="text-2xl font-bold" style={{ color: '#10B981' }}>
                           ${payment.amount.toLocaleString()}
                         </p>
                       </div>
@@ -277,7 +281,7 @@ const Revenue = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => togglePaymentStatus(payment.id)}
-                        style={{borderColor: '#10B981', color: '#10B981'}}
+                        style={{ borderColor: '#10B981', color: '#10B981' }}
                       >
                         {payment.status === 'paid' ? 'Mark Unpaid' : 'Mark Paid'}
                       </Button>
@@ -296,7 +300,7 @@ const Revenue = () => {
           <Card className="w-full max-w-2xl mx-4" onClick={(e) => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold" style={{color: '#10B981'}}>Add Payment</h2>
+                <h2 className="text-2xl font-bold" style={{ color: '#10B981' }}>Add Payment</h2>
                 <Button variant="ghost" size="icon" onClick={() => setShowAddPaymentModal(false)}>
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
@@ -304,60 +308,60 @@ const Revenue = () => {
               <form onSubmit={handleAddPayment} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Client Name *</label>
-                    <input 
-                      type="text" 
+                    <label className="text-sm font-medium" style={{ color: '#10B981' }}>Client Name *</label>
+                    <input
+                      type="text"
                       name="clientName"
                       required
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                       placeholder="John Doe"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Project Name *</label>
-                    <input 
-                      type="text" 
+                    <label className="text-sm font-medium" style={{ color: '#10B981' }}>Project Name *</label>
+                    <input
+                      type="text"
                       name="project"
                       required
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                       placeholder="Kitchen Remodel"
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Amount *</label>
-                    <input 
-                      type="number" 
+                    <label className="text-sm font-medium" style={{ color: '#10B981' }}>Amount *</label>
+                    <input
+                      type="number"
                       name="amount"
                       required
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                       placeholder="5000"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium" style={{color: '#10B981'}}>Due Date *</label>
-                    <input 
-                      type="date" 
+                    <label className="text-sm font-medium" style={{ color: '#10B981' }}>Due Date *</label>
+                    <input
+                      type="date"
                       name="dueDate"
                       required
-                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" 
+                      className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
                 <div className="flex gap-3 pt-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => setShowAddPaymentModal(false)}
-                    style={{borderColor: '#10B981', color: '#10B981'}}
+                    style={{ borderColor: '#10B981', color: '#10B981' }}
                     className="flex-1"
                   >
                     Cancel
                   </Button>
-                  <Button 
-                    type="submit" 
-                    style={{backgroundColor: '#059669', color: 'white'}}
+                  <Button
+                    type="submit"
+                    style={{ backgroundColor: '#059669', color: 'white' }}
                     className="flex-1"
                   >
                     Add Payment
