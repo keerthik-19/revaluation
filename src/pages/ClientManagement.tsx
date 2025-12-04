@@ -38,6 +38,7 @@ const ClientManagement = () => {
   const [showViewProgressModal, setShowViewProgressModal] = useState(false);
   const [showTasksModal, setShowTasksModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [selectedWeek, setSelectedWeek] = useState<number | null>(null); // Track selected week for detail view
   const [newProgress, setNewProgress] = useState(0);
   const [progressNotes, setProgressNotes] = useState('');
 
@@ -285,7 +286,7 @@ const ClientManagement = () => {
                       }}
                     >
                       <CheckSquare className="h-3.5 w-3.5" />
-                      Tasks
+                      Schedule
                     </Button>
                     <Button
                       size="sm"
@@ -720,96 +721,301 @@ const ClientManagement = () => {
         </div>
       )}
 
-      {/* Client Tasks Modal */}
+      {/* Schedule Modal - Monthly Calendar with Week Bubbles */}
       {showTasksModal && selectedClient && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setShowTasksModal(false)}>
-          <Card className="w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => {
+          setShowTasksModal(false);
+          setSelectedWeek(null);
+        }}>
+          <Card className="w-full max-w-5xl mx-4 max-h-[90vh] overflow-y-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Client Tasks - Completed</h2>
-                <Button variant="ghost" size="icon" onClick={() => setShowTasksModal(false)}>
+                <div className="flex items-center gap-3">
+                  {selectedWeek && (
+                    <Button variant="ghost" size="icon" onClick={() => setSelectedWeek(null)}>
+                      <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                  )}
+                  <div>
+                    <h2 className="text-2xl font-bold">
+                      {selectedWeek ? `Week ${selectedWeek} Schedule` : 'Project Schedule'}
+                    </h2>
+                    <p className="text-sm text-muted-foreground mt-1">{selectedClient.name} - {selectedClient.project}</p>
+                  </div>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => {
+                  setShowTasksModal(false);
+                  setSelectedWeek(null);
+                }}>
                   <X className="h-5 w-5" />
                 </Button>
               </div>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-semibold mb-1">{selectedClient.name}</h3>
-                  <p className="text-sm text-muted-foreground">{selectedClient.project}</p>
-                </div>
 
-                {/* Completed Tasks - Past Clients */}
-                <div className="space-y-3">
-                  <div className="p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-start gap-3">
-                        <input type="checkbox" defaultChecked className="mt-1 accent-primary" />
-                        <div>
-                          <h4 className="font-semibold line-through text-muted-foreground">Schedule site inspection</h4>
-                          <p className="text-sm text-muted-foreground">Completed on Oct 15, 2024</p>
-                        </div>
-                      </div>
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                        Completed
-                      </span>
+              {/* Conditional Rendering: Monthly Calendar or Weekly Detail */}
+              {!selectedWeek ? (
+                // Monthly Calendar View with Week Bubbles
+                <div className="space-y-6">
+                  {/* Calendar Header */}
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold">October 2024</h3>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span>Project Duration: Oct 1 - Oct 28</span>
                     </div>
                   </div>
 
-                  <div className="p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-start gap-3">
-                        <input type="checkbox" defaultChecked className="mt-1 accent-primary" />
-                        <div>
-                          <h4 className="font-semibold line-through text-muted-foreground">Order materials</h4>
-                          <p className="text-sm text-muted-foreground">Completed on Oct 18, 2024</p>
+                  {/* Calendar Grid */}
+                  <div className="border border-border rounded-lg overflow-hidden">
+                    {/* Day Headers */}
+                    <div className="grid grid-cols-7 bg-muted/50">
+                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                        <div key={day} className="p-3 text-center font-semibold text-sm border-r border-border last:border-r-0">
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Calendar Days */}
+                    <div className="grid grid-cols-7">
+                      {/* Row 1: Oct 1-5 (Tue-Sat) with Week 1 bubble */}
+                      {[null, null].map((_, index) => (
+                        <div key={`empty-${index}`} className="min-h-[100px] p-2 border-r border-b border-border bg-muted/20" />
+                      ))}
+                      {/* Week 1 bubble spanning Tue-Sat (5 columns) */}
+                      <div className="col-span-5 min-h-[100px] p-2 border-r border-b border-border bg-card relative">
+                        <div className="flex gap-2 mb-2">
+                          {[1, 2, 3, 4, 5].map((day) => (
+                            <div key={day} className="flex-1 text-sm font-medium">{day}</div>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => setSelectedWeek(1)}
+                          className="absolute bottom-3 left-2 right-2 h-8 flex items-center justify-center bg-transparent border-2 border-emerald-500 text-emerald-700 dark:text-emerald-400 font-semibold text-xs rounded-full hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-all duration-300"
+                        >
+                          Week 1: Oct 1-7 (5/5 Done)
+                        </button>
+                      </div>
+
+                      {/* Row 2: Oct 6-12 with Week 1 end + Week 2 start */}
+                      {/* Week 1 end: Sun-Mon (6-7) */}
+                      <div className="col-span-2 min-h-[100px] p-2 border-r border-b border-border bg-card relative">
+                        <div className="flex gap-2 mb-2">
+                          {[6, 7].map((day) => (
+                            <div key={day} className="flex-1 text-sm font-medium">{day}</div>
+                          ))}
                         </div>
                       </div>
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                        Completed
-                      </span>
+                      {/* Week 2 start: Tue-Sat (8-12) */}
+                      <div className="col-span-5 min-h-[100px] p-2 border-r border-b border-border bg-card relative">
+                        <div className="flex gap-2 mb-2">
+                          {[8, 9, 10, 11, 12].map((day) => (
+                            <div key={day} className="flex-1 text-sm font-medium">{day}</div>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => setSelectedWeek(2)}
+                          className="absolute bottom-3 left-2 right-2 h-8 flex items-center justify-center bg-transparent border-2 border-emerald-500 text-emerald-700 dark:text-emerald-400 font-semibold text-xs rounded-full hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-all duration-300"
+                        >
+                          Week 2: Oct 8-14 (6/6 Done)
+                        </button>
+                      </div>
+
+                      {/* Row 3: Oct 13-19 with Week 2 end + Week 3 start */}
+                      {/* Week 2 end: Sun-Mon (13-14) */}
+                      <div className="col-span-2 min-h-[100px] p-2 border-r border-b border-border bg-card relative">
+                        <div className="flex gap-2 mb-2">
+                          {[13, 14].map((day) => (
+                            <div key={day} className="flex-1 text-sm font-medium">{day}</div>
+                          ))}
+                        </div>
+                      </div>
+                      {/* Week 3 start: Tue-Sat (15-19) */}
+                      <div className="col-span-5 min-h-[100px] p-2 border-r border-b border-border bg-card relative">
+                        <div className="flex gap-2 mb-2">
+                          {[15, 16, 17, 18, 19].map((day) => (
+                            <div key={day} className="flex-1 text-sm font-medium">{day}</div>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => setSelectedWeek(3)}
+                          className="absolute bottom-3 left-2 right-2 h-8 flex items-center justify-center bg-transparent border-2 border-amber-500 text-amber-700 dark:text-amber-400 font-semibold text-xs rounded-full hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-all duration-300"
+                        >
+                          Week 3: Oct 15-21 (3/7 Done)
+                        </button>
+                      </div>
+
+                      {/* Row 4: Oct 20-26 with Week 3 end + Week 4 start */}
+                      {/* Week 3 end: Sun-Mon (20-21) */}
+                      <div className="col-span-2 min-h-[100px] p-2 border-r border-b border-border bg-card relative">
+                        <div className="flex gap-2 mb-2">
+                          {[20, 21].map((day) => (
+                            <div key={day} className="flex-1 text-sm font-medium">{day}</div>
+                          ))}
+                        </div>
+                      </div>
+                      {/* Week 4 start: Tue-Sat (22-26) */}
+                      <div className="col-span-5 min-h-[100px] p-2 border-r border-b border-border bg-card relative">
+                        <div className="flex gap-2 mb-2">
+                          {[22, 23, 24, 25, 26].map((day) => (
+                            <div key={day} className="flex-1 text-sm font-medium">{day}</div>
+                          ))}
+                        </div>
+                        <button
+                          onClick={() => setSelectedWeek(4)}
+                          className="absolute bottom-3 left-2 right-2 h-8 flex items-center justify-center bg-transparent border-2 border-gray-400 text-gray-700 dark:text-gray-400 font-semibold text-xs rounded-full hover:bg-gray-50 dark:hover:bg-gray-950/30 transition-all duration-300"
+                        >
+                          Week 4: Oct 22-28 (0/5 Done)
+                        </button>
+                      </div>
+
+                      {/* Row 5: Oct 27-31 (Week 4 end) */}
+                      <div className="col-span-2 min-h-[100px] p-2 border-r border-b border-border bg-card relative">
+                        <div className="flex gap-2 mb-2">
+                          {[27, 28].map((day) => (
+                            <div key={day} className="flex-1 text-sm font-medium">{day}</div>
+                          ))}
+                        </div>
+                      </div>
+                      {[29, 30, 31].map((day) => (
+                        <div key={day} className="min-h-[100px] p-2 border-r border-b border-border bg-card">
+                          <div className="text-sm font-medium">{day}</div>
+                        </div>
+                      ))}
+                      {[null, null].map((_, index) => (
+                        <div key={`empty-end-${index}`} className="min-h-[100px] p-2 border-r border-b border-border bg-muted/20" />
+                      ))}
                     </div>
                   </div>
 
-                  <div className="p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-start gap-3">
-                        <input type="checkbox" defaultChecked className="mt-1 accent-primary" />
-                        <div>
-                          <h4 className="font-semibold line-through text-muted-foreground">Submit permit application</h4>
-                          <p className="text-sm text-muted-foreground">Completed on Oct 22, 2024</p>
-                        </div>
-                      </div>
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                        Completed
-                      </span>
+                  {/* Legend */}
+                  <div className="flex items-center justify-center gap-6 pt-4 border-t border-border">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-emerald-500"></div>
+                      <span className="text-sm text-muted-foreground">Completed Week</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-amber-500"></div>
+                      <span className="text-sm text-muted-foreground">In Progress Week</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded-full bg-gray-400"></div>
+                      <span className="text-sm text-muted-foreground">Pending Week</span>
                     </div>
                   </div>
 
-                  <div className="p-4 border border-border rounded-lg hover:bg-muted/30 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-start gap-3">
-                        <input type="checkbox" defaultChecked className="mt-1 accent-primary" />
-                        <div>
-                          <h4 className="font-semibold line-through text-muted-foreground">Final walkthrough with client</h4>
-                          <p className="text-sm text-muted-foreground">Completed on Nov 5, 2024</p>
-                        </div>
-                      </div>
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                        Completed
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-3 pt-4">
                   <Button
-                    variant="outline"
                     onClick={() => setShowTasksModal(false)}
+                    variant="outline"
                     className="w-full"
                   >
                     Close
                   </Button>
                 </div>
-              </div>
+              ) : (
+                // Weekly Detail View - Daily Tasks
+                <div className="space-y-6">
+                  <div className="bg-muted/30 p-4 rounded-lg border border-border mb-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold">Week {selectedWeek}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {selectedWeek === 1 ? 'Oct 1 - Oct 7' :
+                            selectedWeek === 2 ? 'Oct 8 - Oct 14' :
+                              selectedWeek === 3 ? 'Oct 15 - Oct 21' :
+                                'Oct 22 - Oct 28'}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-muted-foreground">Progress</p>
+                        <p className="text-lg font-bold">
+                          {selectedWeek === 1 ? '5/5' :
+                            selectedWeek === 2 ? '6/6' :
+                              selectedWeek === 3 ? '3/7' :
+                                '0/5'} Tasks
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-7 gap-3">
+                    {/* Days of the week */}
+                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => {
+                      // Mock data for tasks - you can customize this
+                      const dayTasks = selectedWeek === 1 && index < 5 ? [
+                        { name: 'Site prep', status: 'completed' },
+                        ...(index === 0 ? [{ name: 'Materials delivery', status: 'completed' }] : [])
+                      ] : selectedWeek === 2 && index < 6 ? [
+                        { name: 'Foundation work', status: 'completed' }
+                      ] : selectedWeek === 3 && index < 3 ? [
+                        { name: 'Framing', status: 'completed' }
+                      ] : selectedWeek === 3 && index >= 3 && index < 7 ? [
+                        { name: 'Electrical rough-in', status: 'pending' }
+                      ] : selectedWeek === 4 ? [
+                        { name: 'Plumbing', status: 'pending' }
+                      ] : [];
+
+                      const hasCompleted = dayTasks.some(t => t.status === 'completed');
+                      const hasPending = dayTasks.some(t => t.status === 'pending');
+                      const bgColor = hasCompleted && !hasPending ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800' :
+                        hasPending ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800' :
+                          'bg-gray-50 dark:bg-gray-950/20 border-gray-200 dark:border-gray-800';
+
+                      return (
+                        <div key={day} className={`p-3 border-2 rounded-lg ${bgColor} min-h-[120px]`}>
+                          <div className="font-semibold text-sm mb-2 text-center">{day}</div>
+                          <div className="text-xs text-center text-muted-foreground mb-3">
+                            Oct {selectedWeek ? ((selectedWeek - 1) * 7 + index + 1) : index + 1}
+                          </div>
+                          <div className="space-y-1">
+                            {dayTasks.map((task, taskIndex) => (
+                              <div
+                                key={taskIndex}
+                                className={`text-xs p-1.5 rounded ${task.status === 'completed'
+                                  ? 'bg-emerald-500 text-white'
+                                  : 'bg-amber-500 text-white'
+                                  }`}
+                              >
+                                {task.name}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Task Legend */}
+                  <div className="flex items-center justify-center gap-6 pt-4 border-t border-border">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded bg-emerald-500"></div>
+                      <span className="text-sm text-muted-foreground">Completed Task</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 rounded bg-amber-500"></div>
+                      <span className="text-sm text-muted-foreground">Pending Task</span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={() => setSelectedWeek(null)}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      Back to Calendar
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setShowTasksModal(false);
+                        setSelectedWeek(null);
+                      }}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           </Card>
         </div>
